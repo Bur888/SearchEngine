@@ -1,0 +1,29 @@
+server:
+  port: 8087
+
+spring:
+  datasource:
+    username: root
+    password: Zhuchkov777@yandex.ru
+    url: jdbc:mysql://localhost:3306/search_engine?useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
+  jpa:
+    properties:
+     hibernate: 12
+    dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    open-in-view: false
+
+logging:
+  level:
+    root: INFO
+
+indexing-settings:
+  sites:
+    - url: https://www.lenta.ru
+      name: Лента.ру
+    - url: https://www.skillbox.ru
+      name: Skillbox
+    - url: https://www.playback.ru
+      name: PlayBack.Ru
