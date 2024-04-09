@@ -1,6 +1,6 @@
 package searchengine.services;
 
-import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.digester.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,9 @@ import searchengine.model.searchLinks.Link;
 import searchengine.model.searchLinks.ParseWebRecursive;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 @Service
@@ -35,12 +38,13 @@ public class IndexingService {
         if (startIndexing == true) {
             return new IndexingResponseFalse();
         }
+        int i = 1;
+       // ArrayList<ParseWebRecursive> taskList = new ArrayList<>();
         startIndexing = true;
         for (Site site : sitesList.getSites()) {
             String url = site.getUrl();
-            Logger.getLogger(String.valueOf(IndexingService.class)).info("сайт " + url + " пошел");
             Integer siteId = siteCRUDService.getIdByUrl(url);
-            if (!(siteId == null)) {
+            if (siteId != null) {
                 siteCRUDService.deleteById(siteId);
             }
 
@@ -49,19 +53,26 @@ public class IndexingService {
             newSite.setName(site.getName());
             newSite.setStatusIndexing(StatusIndexing.INDEXING);
             siteCRUDService.save(newSite);
-            Logger.getLogger(String.valueOf(IndexingService.class)).info("После сохранением сайта в репозиторий" + url);
+            Integer newSiteId = siteCRUDService.getIdByUrl(url);
 
-            Link newLink = new Link(url);
-            ParseWebRecursive newTask = new ParseWebRecursive();
+            Link newLink = new Link(url, newSiteId);
+            ParseWebRecursive newTask = new ParseWebRecursive(siteCRUDService, pageCRUDService);
             newTask.setLink(newLink);
-            newTask.setSiteEntity(newSite);
             newTask.fork();
             tasks.add(newTask);
-            Logger.getLogger("Организован поиск по ссылке " + site.getUrl());
+            Logger.getLogger(String.valueOf(IndexingService.class))
+                    .info("IndexingService  " + site.getUrl() + " включен в списко задач");
         }
 
         for (ParseWebRecursive task : tasks) {
             task.join();
+            Logger.getLogger(String.valueOf(IndexingService.class))
+                    .info("Поиск по ссылке " + task.getLink().getUrl() + " завершен");
+            SiteEntity newSiteEntity = siteCRUDService.getById(task.getLink().getSiteId());
+            newSiteEntity.setStatusIndexing(StatusIndexing.INDEXED);
+            siteCRUDService.save(newSiteEntity);
+            Logger.getLogger(String.valueOf(IndexingService.class))
+                    .info("Статус индексации ссылки " + task.getLink().getUrl() + " изменен");
         }
         startIndexing = false;
         return new IndexingResponseTrue();

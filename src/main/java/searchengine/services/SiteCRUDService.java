@@ -17,8 +17,13 @@ import java.util.logging.Logger;
 public class SiteCRUDService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    @Autowired
+
     private SiteRepository siteRepository;
+
+    @Autowired
+    public SiteCRUDService(SiteRepository siteRepository) {
+        this.siteRepository = siteRepository;
+    }
 
     public SiteEntity getById(Integer id) {
         Optional<SiteEntity> site = siteRepository.findById(id);

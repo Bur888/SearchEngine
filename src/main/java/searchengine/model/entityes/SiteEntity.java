@@ -34,6 +34,6 @@ public class SiteEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255)")
     private String name;
 
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PageEntity> pages;
 }

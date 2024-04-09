@@ -4,30 +4,27 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Link {
-    private String link;
-    private int siteId;
+    private String url;
+    private final int siteId;
     private static HashSet<String> allLinks = new HashSet<>();
     private ArrayList<Link> links;
 
-    public Link(String link) {
-        this.link = link;
+    public Link(String link, int siteId) {
+        this.url = link;
+        this.siteId = siteId;
         links = new ArrayList<>();
     }
 
-    public String getLink() {
-        return link;
+    public String getUrl() {
+        return url;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public int getSiteId() {
         return siteId;
-    }
-
-    public void setSiteId(int siteId) {
-        this.siteId = siteId;
     }
 
     public ArrayList<Link> getLinks() {
