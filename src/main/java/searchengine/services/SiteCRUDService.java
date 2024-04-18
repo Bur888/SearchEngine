@@ -1,14 +1,17 @@
 package searchengine.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import searchengine.model.entityes.SiteEntity;
+import searchengine.model.entityes.StatusIndexing;
 import searchengine.repository.SiteRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -54,5 +57,16 @@ public class SiteCRUDService {
 
     public void save(SiteEntity site) {
         siteRepository.save(site);
+    }
+    public SiteEntity getByUrl(String url) {
+        List<SiteEntity> siteEntityList = siteRepository.getByUrl(url);
+        return siteEntityList.get(0);
+    }
+    public void updateWithFailedStatus(String url, String error) {
+        SiteEntity siteEntity = getByUrl(url);
+        siteEntity.setStatusTime(LocalDateTime.now());
+        siteEntity.setStatusIndexing(StatusIndexing.FAILED);
+        siteEntity.setLastError(error);
+        save(siteEntity);
     }
 }

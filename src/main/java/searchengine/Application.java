@@ -12,5 +12,8 @@ public class Application {
     public static void main(String[] args) {
 
         SpringApplication.run(Application.class, args);
+        //TODO прописать присвоение статуса FAILED про остановке поиска
+        //TODO завершить обрабоку ошибки в класск ПарсВеб и написания метода получения сущности в класск САЙТКРУД
+
     }
 }

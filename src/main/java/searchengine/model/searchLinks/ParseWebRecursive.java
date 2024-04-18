@@ -32,10 +32,11 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
     protected Link compute() {
         Logger.getLogger("123").info("Организован поиск по ссылке " + link.getUrl());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         ParseWeb parseWed = new ParseWeb(siteCRUDService, pageCRUDService);
         parseWed.setLink(link);
         ArrayList<Link> links = parseWed.getLinksOnUrl();

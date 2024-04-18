@@ -25,5 +25,9 @@ indexing-settings:
     #  name: Skillbox
     - url: https://lenta.ru
       name: Лента.ру
-    #- url: http://www.playback.ru
-  #  name: Playback
+    - url: http://www.playback.ru
+      name: Playback
+    - url: https://dombulgakova.ru
+      name: Dom_Bulgakova
+      # - url: https://ipfran.ru
+    #  name: ipfran

@@ -1,26 +1,24 @@
 package searchengine.services;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.catalina.util.Introspection;
-import org.aspectj.apache.bcel.classfile.Module;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSourceExtensionsKt;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.PageEntity;
 import searchengine.model.entityes.SiteEntity;
+import searchengine.model.searchLinks.Link;
 import searchengine.repository.PageRepository;
-import searchengine.repository.SiteRepository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 
 @Service
@@ -34,7 +32,7 @@ public class PageCRUDService {
 
     @Autowired
     public PageCRUDService(SiteCRUDService siteCRUDService, PageRepository pageRepository) {
-        this.siteCRUDService =siteCRUDService;
+        this.siteCRUDService = siteCRUDService;
         this.pageRepository = pageRepository;
     }
 
@@ -51,22 +49,7 @@ public class PageCRUDService {
         pageRepository.save(page);
     }
 
-    public boolean isUrlLInDB(String url, Integer siteId) {
-/*
-        Integer entity = jdbcTemplate.queryForObject(
-                "SELECT * FROM search_engine.page WHERE path = ? AND site_id = " + siteId,
-                Integer.class, url);
-        return entity != null && entity > 0;
-*/
-/*
-        List<PageToDto> pageToDtoList = jdbcTemplate.query(
-                "SELECT * FROM search_engine.page WHERE path = :url AND site_id = :siteId",
-                new MapSqlParameterSource()
-                        .addValue("url", url)
-                        .addValue("siteId", siteId),
-                );
-*/
-
+    public boolean isUrlInDB(String url, Integer siteId) {
         List<PageToDto> pageToDtoList = jdbcTemplate.query(
                 "SELECT * FROM search_engine.page WHERE path = ? AND site_id = ?",
                 new Object[]{url, siteId},
@@ -79,9 +62,8 @@ public class PageCRUDService {
                     }
                 }
         );
-        return pageToDtoList.isEmpty();
+        return !pageToDtoList.isEmpty();
     }
-
 
     public static PageToDto mapToDto(PageEntity pageEntity) {
         PageToDto pageToDto = new PageToDto();
@@ -103,4 +85,41 @@ public class PageCRUDService {
         pageEntity.setCode(pageToDto.getCode());
         return pageEntity;
     }
+
+    public void saveAll(ArrayList<PageToDto> pageList) {
+        jdbcTemplate.batchUpdate("INSERT INTO search_engine.page (site_id, path, code, content) " +
+                        "VALUES (?, ?, ?, ?)",
+                pageList,
+                pageList.size(),
+                (PreparedStatement ps, PageToDto pageToDto) -> {
+                    ps.setInt(1, pageToDto.getSiteId());
+                    ps.setString(2, pageToDto.getPath());
+                    ps.setInt(3, pageToDto.getCode());
+                    ps.setString(4, pageToDto.getContent());
+                });
+    }
+
+/*
+    public synchronized void savePageList(ArrayList<PageToDto> pageToDtoList) {
+        ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) pageToDtoList.clone();
+        int num = pageToDtoArrayList.size();
+        jdbcTemplate.batchUpdate("INSERT INTO search_engine.page (site_id, path, code, content) " +
+                        "VALUES (?, ?, ?, ?)",
+                pageToDtoArrayList,
+                num,
+                (PreparedStatement ps, PageToDto pageToDto) -> {
+                    ps.setInt(1, pageToDto.getSiteId());
+                    ps.setString(2, pageToDto.getPath());
+                    ps.setInt(3, pageToDto.getCode());
+                    ps.setString(4, pageToDto.getContent());
+                });
+        Logger.getLogger("savePageList")
+                .info("Произведено сохранение PageToDTOList size " + PageToDto.getPageToDtoList().size());
+        PageToDto.setPageToDtoList(
+                (ArrayList<PageToDto>) PageToDto.getPageToDtoList()
+                        .subList(num + 1, pageToDtoList.size()));
+        Link.getAllLinks().clear();
+    }
+*/
 }
+
