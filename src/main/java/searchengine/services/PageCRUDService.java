@@ -98,28 +98,5 @@ public class PageCRUDService {
                     ps.setString(4, pageToDto.getContent());
                 });
     }
-
-/*
-    public synchronized void savePageList(ArrayList<PageToDto> pageToDtoList) {
-        ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) pageToDtoList.clone();
-        int num = pageToDtoArrayList.size();
-        jdbcTemplate.batchUpdate("INSERT INTO search_engine.page (site_id, path, code, content) " +
-                        "VALUES (?, ?, ?, ?)",
-                pageToDtoArrayList,
-                num,
-                (PreparedStatement ps, PageToDto pageToDto) -> {
-                    ps.setInt(1, pageToDto.getSiteId());
-                    ps.setString(2, pageToDto.getPath());
-                    ps.setInt(3, pageToDto.getCode());
-                    ps.setString(4, pageToDto.getContent());
-                });
-        Logger.getLogger("savePageList")
-                .info("Произведено сохранение PageToDTOList size " + PageToDto.getPageToDtoList().size());
-        PageToDto.setPageToDtoList(
-                (ArrayList<PageToDto>) PageToDto.getPageToDtoList()
-                        .subList(num + 1, pageToDtoList.size()));
-        Link.getAllLinks().clear();
-    }
-*/
 }
 

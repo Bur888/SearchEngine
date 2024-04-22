@@ -33,6 +33,11 @@ public class PageToDto {
         pageToDto.setCode(code);
         return pageToDto;
     }
+    public static void removePagesToDtoFromList(int count) {
+        for (int i = 0; i < count; i++) {
+            PageToDto.getPageToDtoList().remove(0);
+        }
+    }
 
 }
 

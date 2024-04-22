@@ -46,7 +46,48 @@ public class IndexingService {
         Thread forSavePageAndSiteInDB = new Thread(new SavePageAndSiteInDB(siteCRUDService, pageCRUDService, jdbcTemplate));
         forSavePageAndSiteInDB.start();
 
+        ArrayList<Thread> threads = new ArrayList<>();
         for (Site site : sitesList.getSites()) {
+            Thread threadForSearchLinks = new Thread(new ThreadForSearchLinks(siteCRUDService, pageCRUDService, site));
+            threadForSearchLinks.start();
+            threads.add(threadForSearchLinks);
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Logger.getLogger(String.valueOf(IndexingService.class))
+                        .info("Прерван параллельный поток для сохранения Page и Site в базу данных");
+            }
+
+        }
+
+       // SavePageAndSiteInDB.setFlag(false);
+/*
+        try {
+            forSavePageAndSiteInDB.join();
+            Logger.getLogger(String.valueOf(IndexingService.class))
+                    .info("Поток SavePageAndSiteInDB завершен");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+*/
+        forSavePageAndSiteInDB.interrupt();
+        Logger.getLogger(String.valueOf(IndexingService.class))
+                .info("Поток SavePageAndSiteInDB завершен");
+        Logger.getLogger(String.valueOf(IndexingService.class))
+                .info("Размер листа SavePageAndSiteInDB " + SavePageAndSiteInDB.getPageToDtoArrayList().size());
+        Logger.getLogger(String.valueOf(IndexingService.class))
+                .info("Размер листа PageToDtoList " + PageToDto.getPageToDtoList().size());
+
+        //PageToDto.getPageToDtoList().clear();
+       // Link.getAllLinks().clear();
+        startIndexing = false;
+        return new IndexingResponseTrue();
+    }
+}
+/*          thr
             String url = site.getUrl();
             Integer siteId = siteCRUDService.getIdByUrl(url);
             if (siteId != null) {
@@ -87,8 +128,10 @@ public class IndexingService {
             siteCRUDService.save(newSiteEntity);
             Logger.getLogger(String.valueOf(IndexingService.class))
                             .info("Статус индексации ссылки " + task.getLink().getUrl() + " изменен");
-        }
+*/
 
+
+/*
         if (!PageToDto.getPageToDtoList().isEmpty()) {
             pageCRUDService.saveAll(PageToDto.getPageToDtoList());
             PageToDto.getPageToDtoList().removeAll(PageToDto.getPageToDtoList());
@@ -102,19 +145,16 @@ public class IndexingService {
                                 .info("Прерван параллельный поток для сохранения Page и Site в базу данных");
             }
         }
+*/
 
-        forSavePageAndSiteInDB.interrupt();
-        PageToDto.getPageToDtoList().clear();
-        Link.getAllLinks().clear();
-        startIndexing = false;
-        return new IndexingResponseTrue();
-    }
-
+/*
     public void isUrlWorking(String url) throws IOException {
         ConnectionWeb connection = new ConnectionWeb();
         connection.getDocument(url);
     }
+*/
 
+/*
     public static String getHttpStatusException(Integer code) {
         String error;
         switch (code) {
@@ -126,5 +166,6 @@ public class IndexingService {
         }
         return error;
     }
-}
+*/
+
 

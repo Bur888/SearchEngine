@@ -44,7 +44,6 @@ public class ParseWeb {
             return links;
         }
         try {
-            // Document document = connection.getDocument(link.getUrl());
             if (!isUrlInLinksAndDB(link.getUrl(), link.getSiteId())) {
                 Document document = connection.getDocument(link.getUrl());
                 Link.getAllLinks().add(link.getUrl());
@@ -83,17 +82,6 @@ public class ParseWeb {
         }
         return false;
     }
-/*
-    public boolean isURL(String url) {
-        try {
-            new URL(url).openStream().close();
-            return true;
-        } catch (Exception ex) {
-            System.out.println(ex.getStackTrace());
-        }
-        return false;
-    }
-*/
     public boolean isLinkOnCurrentSite(String newUrl) {
         Pattern pattern = Pattern.compile(link.getUrl());
         Matcher matcher = pattern.matcher(newUrl);

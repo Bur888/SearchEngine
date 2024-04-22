@@ -28,12 +28,15 @@ public class SavePageAndSiteInDB implements Runnable {
     private JdbcTemplate jdbcTemplate;
     private SiteCRUDService siteCRUDService;
     private PageCRUDService pageCRUDService;
+/*
     @Getter
     @Setter
     private static boolean flag;
+*/
 
-    private ArrayList<PageToDto> pageToDtoArrayList = new ArrayList<>();
-    private ArrayList<SiteEntity> siteEntityArrayList = new ArrayList<>();
+    @Getter
+    @Setter
+    private volatile static ArrayList<PageToDto> pageToDtoArrayList = new ArrayList<>();
 
     @Autowired
     public SavePageAndSiteInDB(SiteCRUDService siteCRUDService,
@@ -48,8 +51,8 @@ public class SavePageAndSiteInDB implements Runnable {
     public void run() {
         Logger.getLogger("SavePageAndSiteInDB")
                 .info("Параллельный поток пошел");
-        flag = true;
-        while (flag) {
+        //flag = true;
+        while (true) {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
@@ -66,10 +69,7 @@ public class SavePageAndSiteInDB implements Runnable {
                         .info("Произведено сохранение PageToDTOList в DB size " + pageToDtoArrayList.size());
                 Logger.getLogger("SavePageAndSiteInDB")
                         .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoList().size());
-                for (int i = 0; i < pageToDtoArrayList.size(); i++) {
-                    PageToDto.getPageToDtoList().remove(0);
-                }
-
+                PageToDto.removePagesToDtoFromList(pageToDtoArrayList.size());
                 Logger.getLogger("SavePageAndSiteInDB")
                         .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoList().size());
                 for (Integer siteId : getAllSiteId()) {
@@ -91,6 +91,12 @@ public class SavePageAndSiteInDB implements Runnable {
             uniqSiteId.add(siteId);
         }
         return uniqSiteId;
+    }
+
+    public static void removePagesToDtoFromList(int count) {
+        for (int i = 0; i < count; i++) {
+            pageToDtoArrayList.remove(0);
+        }
     }
 }
 
