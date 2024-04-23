@@ -56,10 +56,9 @@ public class ThreadForSearchLinks implements Runnable{
             Thread.sleep(3001);
             Logger.getLogger(String.valueOf(IndexingService.class))
                     .info("Поиск по ссылке " + url + " завершен");
-            pagesListForSave = (ArrayList<PageToDto>) SavePageAndSiteInDB.getPageToDtoArrayList().clone();
-            pageCRUDService.saveAll(pagesListForSave);
-            PageToDto.removePagesToDtoFromList(pagesListForSave.size());
-            SavePageAndSiteInDB.removePagesToDtoFromList(pagesListForSave.size());
+            synchronized (ThreadForSearchLinks.class) {
+                pageCRUDService.saveAndRemove(PageToDto.getPageToDtoList());
+            }
             newSite.setStatusIndexing(StatusIndexing.INDEXED);
             siteCRUDService.save(newSite);
             Logger.getLogger(String.valueOf(IndexingService.class))

@@ -98,5 +98,18 @@ public class PageCRUDService {
                     ps.setString(4, pageToDto.getContent());
                 });
     }
+    public void saveAndRemove(ArrayList<PageToDto> list) {
+        ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) list.clone();
+        Logger.getLogger("SavePageAndSiteInDB")
+                .info("Размер эррэйлиста " + pageToDtoArrayList.size());
+        saveAll(pageToDtoArrayList);
+        Logger.getLogger("SavePageAndSiteInDB")
+                .info("Произведено сохранение PageToDTOList в DB size " + pageToDtoArrayList.size());
+        Logger.getLogger("SavePageAndSiteInDB")
+                .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoList().size());
+        PageToDto.removePagesToDtoFromList(pageToDtoArrayList.size());
+        Logger.getLogger("SavePageAndSiteInDB")
+                .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoList().size());
+    }
 }
 

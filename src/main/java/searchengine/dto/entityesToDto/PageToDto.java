@@ -1,5 +1,6 @@
 package searchengine.dto.entityesToDto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import searchengine.model.searchLinks.Link;
@@ -14,9 +15,11 @@ public class PageToDto {
     private String path;
     private int code;
     private String content;
+    @Getter
+    @Setter
+    private static ArrayList<PageToDto> pageToDtoList = new ArrayList<>();
 
-    private volatile static ArrayList<PageToDto> pageToDtoList = new ArrayList<>();
-
+/*
     public static ArrayList<PageToDto> getPageToDtoList() {
         return pageToDtoList;
     }
@@ -24,6 +27,7 @@ public class PageToDto {
     public synchronized static void setPageToDtoList(ArrayList<PageToDto> pageToDtoList) {
         PageToDto.pageToDtoList = pageToDtoList;
     }
+*/
 
     public PageToDto makePageToDtoForSave(Link link, String document, Integer code) {
         PageToDto pageToDto = new PageToDto();
@@ -35,9 +39,8 @@ public class PageToDto {
     }
     public static void removePagesToDtoFromList(int count) {
         for (int i = 0; i < count; i++) {
-            PageToDto.getPageToDtoList().remove(0);
+            pageToDtoList.remove(0);
         }
     }
-
 }
 

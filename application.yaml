@@ -23,11 +23,11 @@ indexing-settings:
   sites:
     #- url: https://skillbox.ru
     #  name: Skillbox
-    #- url: https://lenta.ru
-    #  name: Лента.ру
+    - url: https://lenta.ru
+      name: Лента.ру
     - url: http://www.playback.ru
       name: Playback
-      #- url: https://dombulgakova.ru
-      #   name: Dom_Bulgakova
+    - url: https://dombulgakova.ru
+      name: Dom_Bulgakova
       # - url: https://ipfran.ru
     #  name: ipfran
