@@ -21,13 +21,27 @@ logging:
 
 indexing-settings:
   sites:
-    #- url: https://skillbox.ru
-    #  name: Skillbox
-    - url: https://lenta.ru
-      name: Лента.ру
-    - url: http://www.playback.ru
-      name: Playback
+    #️ - url: http://www.playback.ru
+    #️   name: playback
+    #️- url: https://lenta.ru
+    #️ name: lenta
+      #️ - url: http://radiomv.ru
+    #️   name: radio
     - url: https://dombulgakova.ru
-      name: Dom_Bulgakova
-      # - url: https://ipfran.ru
-    #  name: ipfran
+      name: dombulgakova
+    - url: https://sendel.ru
+      name: sendel
+   #️ - url: https://volochek.life
+      #️ name: volochek
+      #️ - url: https://ipfran.ru/
+    #️  name: ipfran
+      #️ - url: https://dimonvideo.ru/
+    #️   name: dimonvideo
+      #️ - url: https://nikoartgallery.com/
+    #️   name: nikoartgallery
+      #️ - url: https://et-cetera.ru/mobile/
+    #️   name: et-cetera
+      #️  - url: https://www.lutherancathedral.ru/
+    #️  name: lutherancathedral
+      #️ - url: https://www.svetlovka.ru/
+    #️  name: svetlovka

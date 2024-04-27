@@ -19,7 +19,7 @@ public class PageEntity {
     @JoinColumn(name = "site_id", nullable = false)
     private SiteEntity site;
 
-    @Column(columnDefinition = "TEXT NOT NULL, Index(path(512))")
+    @Column//(columnDefinition = "TEXT NOT NULL, Index(path(512))")
     private String path;
 
     @Column(nullable = false)

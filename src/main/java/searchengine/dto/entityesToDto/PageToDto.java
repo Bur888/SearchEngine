@@ -3,7 +3,11 @@ package searchengine.dto.entityesToDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import searchengine.model.entityes.SiteEntity;
 import searchengine.model.searchLinks.Link;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 @Getter
@@ -29,10 +33,10 @@ public class PageToDto {
     }
 */
 
-    public PageToDto makePageToDtoForSave(Link link, String document, Integer code) {
+    public PageToDto makePageToDtoForSave(Integer siteId, String url, String document, Integer code) {
         PageToDto pageToDto = new PageToDto();
-        pageToDto.setSiteId(link.getSiteId());
-        pageToDto.setPath(link.getUrl());
+        pageToDto.setSiteId(siteId);
+        pageToDto.setPath(url);
         pageToDto.setContent(String.valueOf(document));
         pageToDto.setCode(code);
         return pageToDto;

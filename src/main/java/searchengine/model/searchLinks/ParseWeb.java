@@ -38,36 +38,53 @@ public class ParseWeb {
     public ArrayList<Link> getLinksOnUrl() {
         ArrayList<Link> links = new ArrayList<>();
         PageToDto pageToDto = new PageToDto();
+        String urlClear = Link.clearUrl(link.getUrl());
+        String urlWithoutRoot = new String();
 
-        if (!isURL(link.getUrl())) {
-            logger.info(link.getUrl() + " не является ссылкой");
+        if (!isURL(urlClear)) {
+            logger.info(urlClear + " не является ссылкой");
             return links;
         }
         try {
-            if (!isUrlInLinksAndDB(link.getUrl(), link.getSiteId())) {
+            if (!isUrlInLinksAndDB(urlClear, link.getSiteId())) {
                 Document document = connection.getDocument(link.getUrl());
-                Link.getAllLinks().add(link.getUrl());
-                pageToDto = pageToDto.makePageToDtoForSave(link, String.valueOf(document), HttpStatus.OK.value());
-
+                urlWithoutRoot = Link.urlWithoutRoot(urlClear);
+                //if (updateUrl != null) {
+                    pageToDto = pageToDto.makePageToDtoForSave(link.getSiteId(), urlWithoutRoot, String.valueOf(document), HttpStatus.OK.value());
+                //}
+                Elements elements = document.select("a[href]");
+                for (Element element : elements) {
+                    String newUrl = Link.clearUrl(element.attr("abs:href"));
+                    if (isLinkOnCurrentSite(newUrl) & !isUrlInLinksAndDB(newUrl, link.getSiteId())) {
+                        Link newLink = new Link(newUrl, link.getSiteId(), link.getRoot());
+                        links.add(newLink);
+                        logger.info("По ссылке " + urlClear + " добавлена ссылка " + newUrl);
+/*
                 Elements elements = document.select("body").select("a");
                 for (Element element : elements) {
-                    String newUrl = element.absUrl("href");
+                    String newUrl = Link.clearUrl(element.absUrl("href"));
                     if (isLinkOnCurrentSite(newUrl) & !isUrlInLinksAndDB(newUrl, link.getSiteId())) {
                         Link newLink = new Link(newUrl, link.getSiteId());
                         links.add(newLink);
                         logger.info("По ссылке " + link.getUrl() + " добавлена ссылка " + newUrl);
+*/
                     }
                 }
             }
         } catch (HttpStatusException ex) {
-            pageToDto = pageToDto.makePageToDtoForSave(link, null, ex.getStatusCode());
-            Link.getAllLinks().add(link.getUrl());
+            if (pageToDto.getPath() != null && !ParseWebRecursive.isStopNow()) {
+                pageToDto = pageToDto.makePageToDtoForSave(link.getSiteId(), urlWithoutRoot, null, ex.getStatusCode());
+                Link.getAllLinks().add(urlClear);
+            }
         } catch (IOException e) {
-            pageToDto = pageToDto.makePageToDtoForSave(link, null, HttpStatus.BAD_GATEWAY.value());
-            Link.getAllLinks().add(link.getUrl());
+            if (pageToDto.getPath() != null && !ParseWebRecursive.isStopNow()) {
+                pageToDto = pageToDto.makePageToDtoForSave(link.getSiteId(), urlWithoutRoot, null, HttpStatus.BAD_GATEWAY.value());
+                Link.getAllLinks().add(urlClear);
+            }
         } finally {
-            if (pageToDto.getPath() != null) {
+            if (pageToDto.getPath() != null && !ParseWebRecursive.isStopNow()) {
                 PageToDto.getPageToDtoList().add(pageToDto);
+                Link.getAllLinks().add(urlClear);
             }
         }
         return links;
@@ -83,12 +100,13 @@ public class ParseWeb {
         return false;
     }
     public boolean isLinkOnCurrentSite(String newUrl) {
-        Pattern pattern = Pattern.compile(link.getUrl());
+        Pattern pattern = Pattern.compile(link.getRoot());
         Matcher matcher = pattern.matcher(newUrl);
         return matcher.find();
     }
 
     public boolean isUrlInLinksAndDB(String url, Integer siteId) {
-        return Link.getAllLinks().contains(url) || pageCRUDService.isUrlInDB(url, siteId);
+        return Link.getAllLinks().contains(url) || pageCRUDService.isUrlInDB(Link.urlWithoutRoot(url), siteId);
     }
+
 }

@@ -8,11 +8,16 @@ import searchengine.services.SiteCRUDService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.logging.Logger;
 
 
 public class ParseWebRecursive extends RecursiveTask<Link> {
+
+    @Getter
+    @Setter
+    private static boolean stopNow;
 
     @Autowired
     private SiteCRUDService siteCRUDService;
@@ -30,6 +35,9 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
 
     @Override
     protected Link compute() {
+        if (stopNow) {
+            return null;
+        }
         Logger.getLogger("123").info("Организован поиск по ссылке " + link.getUrl());
         try {
             Thread.sleep(500);

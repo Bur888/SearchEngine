@@ -8,6 +8,7 @@ import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.PageEntity;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.searchLinks.Link;
+import searchengine.model.searchLinks.ThreadForSavePageAndSiteInDB;
 import searchengine.repository.PageRepository;
 
 import java.sql.PreparedStatement;
@@ -99,16 +100,16 @@ public class PageCRUDService {
                 });
     }
     public void saveAndRemove(ArrayList<PageToDto> list) {
-        ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) list.clone();
-        Logger.getLogger("SavePageAndSiteInDB")
-                .info("Размер эррэйлиста " + pageToDtoArrayList.size());
-        saveAll(pageToDtoArrayList);
-        Logger.getLogger("SavePageAndSiteInDB")
-                .info("Произведено сохранение PageToDTOList в DB size " + pageToDtoArrayList.size());
-        Logger.getLogger("SavePageAndSiteInDB")
+        //ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) list.clone();
+        Logger.getLogger("PageCRUDService")
+                .info("Размер эррэйлиста " + list.size());
+        saveAll(list);
+        Logger.getLogger("PageCRUDService")
+                .info("Произведено сохранение PageToDTOList в DB size " + list.size());
+        Logger.getLogger("PageCRUDService")
                 .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoList().size());
-        PageToDto.removePagesToDtoFromList(pageToDtoArrayList.size());
-        Logger.getLogger("SavePageAndSiteInDB")
+        PageToDto.removePagesToDtoFromList(list.size());
+        Logger.getLogger("SavePageAndSiteInDBPageCRUDService")
                 .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoList().size());
     }
 }

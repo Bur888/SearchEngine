@@ -15,20 +15,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-@Component
+
 public class ThreadForSavePageAndSiteInDB implements Runnable {
     private JdbcTemplate jdbcTemplate;
     private SiteCRUDService siteCRUDService;
     private PageCRUDService pageCRUDService;
-
-   // private static boolean flag;
-
     @Getter
     @Setter
     private volatile static ArrayList<PageToDto> pageToDtoArrayList = new ArrayList<>();
 
     @Autowired
-    public ThreadForSavePageAndSiteInDB(SiteCRUDService siteCRUDService,
+    public  ThreadForSavePageAndSiteInDB(SiteCRUDService siteCRUDService,
                                         PageCRUDService pageCRUDService,
                                         JdbcTemplate jdbcTemplate) {
         this.siteCRUDService = siteCRUDService;
@@ -38,29 +35,29 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
 
     @Override
     public void run() {
-        Logger.getLogger("SavePageAndSiteInDB")
+        Logger.getLogger("ThreadForSavePageAndSiteInDB")
                 .info("Параллельный поток пошел");
-        //flag = true;
         while (true) {
             try {
                 Thread.sleep(3000);
             if (PageToDto.getPageToDtoList().size() > 100) {
-                synchronized (ThreadForSavePageAndSiteInDB.class) {
-                    pageCRUDService.saveAndRemove(PageToDto.getPageToDtoList());
-                }
+                pageToDtoArrayList = (ArrayList<PageToDto>) PageToDto.getPageToDtoList().clone();
+                //synchronized (ThreadForSavePageAndSiteInDB.class) {
+                    pageCRUDService.saveAndRemove(pageToDtoArrayList);
+                //}
                 for (Integer siteId : getAllSiteId()) {
                     SiteEntity siteEntity = siteCRUDService.getById(siteId);
                     siteEntity.setStatusTime(LocalDateTime.now());
                     siteCRUDService.save(siteEntity);
                 }
+                Link.removeAllLinks(pageToDtoArrayList);
                 pageToDtoArrayList.clear();
                 Logger.getLogger("SavePageAndSiteInDB")
                         .info("Прошел очередной цикл");
             }
             } catch (InterruptedException e) {
-                Logger.getLogger("SavePageAndSiteInDB")
+                Logger.getLogger("ThreadForSavePageAndSiteInDB")
                         .info("Прерван параллельный поток в состоянии ожидания");
-                //flag = false;
                 break;
             }
         }

@@ -1,48 +1,54 @@
-package searchengine.services;
+package searchengine.services.indexingService;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-import searchengine.config.Site;
 import searchengine.config.SitesList;
 import searchengine.dto.entityesToDto.PageToDto;
-import searchengine.dto.indexing.IndexingResponse;
-import searchengine.dto.indexing.IndexingResponseFalse;
-import searchengine.dto.indexing.IndexingResponseTrue;
-import searchengine.model.searchLinks.*;
+import searchengine.model.searchLinks.Link;
+import searchengine.model.searchLinks.ParseWebRecursive;
+import searchengine.model.searchLinks.ThreadForSavePageAndSiteInDB;
+import searchengine.model.searchLinks.ThreadForSearchLinks;
+import searchengine.services.PageCRUDService;
+import searchengine.services.SiteCRUDService;
+import searchengine.config.Site;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-@Service
-public class IndexingService {
+public class StartIndexing implements Runnable {
 
-    private static boolean startIndexing;
-    @Autowired
     private SiteCRUDService siteCRUDService;
-    @Autowired
+
     private PageCRUDService pageCRUDService;
     @Autowired
     private SitesList sitesList;
-    @Autowired
     private JdbcTemplate jdbcTemplate;
-    @Autowired
     private ThreadForSavePageAndSiteInDB savePageAndSiteInDB;
     private ArrayList<ParseWebRecursive> tasks = new ArrayList<>();
-    private ArrayList<Thread> threads = new ArrayList<>();
-    private Thread forSavePageAndSiteInDB;
+    @Getter
+    @Setter
+    private static ArrayList<Thread> threads = new ArrayList<>();
 
-    public IndexingResponse startIndexing() {
+    @Autowired
+    public StartIndexing(SiteCRUDService siteCRUDService,
+                         PageCRUDService pageCRUDService,
+                         JdbcTemplate jdbcTemplate,
+                         SitesList sitesList) {
+        this.siteCRUDService = siteCRUDService;
+        this.pageCRUDService = pageCRUDService;
+        this.jdbcTemplate = jdbcTemplate;
+        this.sitesList = sitesList;
 
-        if (startIndexing == true) {
-            return new IndexingResponseFalse("Индексация уже запущена");
-        }
+    }
 
-        startIndexing = true;
-        forSavePageAndSiteInDB = new Thread(new ThreadForSavePageAndSiteInDB(siteCRUDService, pageCRUDService, jdbcTemplate));
+    @Override
+    public void run() {
+
+        Thread forSavePageAndSiteInDB = new Thread(new ThreadForSavePageAndSiteInDB(siteCRUDService, pageCRUDService, jdbcTemplate));
         forSavePageAndSiteInDB.start();
 
-        ArrayList<Thread> threads = new ArrayList<>();
         for (Site site : sitesList.getSites()) {
             Thread threadForSearchLinks = new Thread(new ThreadForSearchLinks(siteCRUDService, pageCRUDService, site));
             threadForSearchLinks.start();
@@ -56,10 +62,10 @@ public class IndexingService {
                 Logger.getLogger(String.valueOf(IndexingService.class))
                         .info("Прерван параллельный поток для сохранения Page и Site в базу данных");
             }
-
         }
 
         forSavePageAndSiteInDB.interrupt();
+        Link.getAllLinks().clear();
         Logger.getLogger(String.valueOf(IndexingService.class))
                 .info("Поток SavePageAndSiteInDB завершен");
         Logger.getLogger(String.valueOf(IndexingService.class))
@@ -67,21 +73,6 @@ public class IndexingService {
         Logger.getLogger(String.valueOf(IndexingService.class))
                 .info("Размер листа PageToDtoList " + PageToDto.getPageToDtoList().size());
 
-        startIndexing = false;
-        return new IndexingResponseTrue();
-    }
-
-    public IndexingResponse stopIndexing() {
-        if (startIndexing == false) {
-            return new IndexingResponseFalse("Индексация не запущена");
-        }
-        forSavePageAndSiteInDB.interrupt();
-        for (Thread thread : threads) {
-            thread.interrupt();
-        }
-        pageCRUDService.saveAndRemove(PageToDto.getPageToDtoList());
-        return new IndexingResponseTrue();
+        IndexingService.setStartIndexingFlag(false);
     }
 }
-
-
