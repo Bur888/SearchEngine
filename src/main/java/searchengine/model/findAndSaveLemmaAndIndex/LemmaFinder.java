@@ -3,13 +3,10 @@ package searchengine.model.findAndSaveLemmaAndIndex;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 
-import javax.print.Doc;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +56,7 @@ public class LemmaFinder {
 
     public boolean matchingParticlesNames(String text) {
         List<String> wordBaseForms = luceneMorphology.getMorphInfo(text);
-        boolean match = wordBaseForms.stream()
+        return wordBaseForms.stream()
                 .anyMatch((word) -> {
                     for (String particle : particlesNames) {
                         if (particle.contains(word)) {
@@ -68,7 +65,6 @@ public class LemmaFinder {
                     }
                     return false;
                 });
-        return match;
     }
 
     public String cleanDocument(Document document) {
@@ -76,7 +72,7 @@ public class LemmaFinder {
         for (Element element : elements) {
             element.textNodes().stream()
                     .filter(textNode -> textNode.getWholeText().trim().isEmpty())
-                    .forEach(textNode -> textNode.remove());
+                    .forEach(Node::remove);
         }
         return document.body().text().toLowerCase(Locale.ROOT);
     }

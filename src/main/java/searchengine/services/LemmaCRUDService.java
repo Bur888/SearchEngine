@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.findAndSaveLemmaAndIndex.LemmaFinder;
 import searchengine.model.entityes.LemmaEntity;
 import searchengine.repository.LemmaRepository;
@@ -13,12 +12,10 @@ import searchengine.repository.LemmaRepository;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.locks.Condition;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,16 +52,13 @@ public class LemmaCRUDService {
                         .map(lemma -> "'" + lemma.getLemma() + "'")
                         .collect(Collectors.joining(",")) +
                 ")";
-        List<LemmaEntity> lemmasList = jdbcTemplate.query(sql, new RowMapper<LemmaEntity>() {
-            @Override
-            public LemmaEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-                LemmaEntity lemma = new LemmaEntity();
-                lemma.setId(rs.getInt("id"));
-                lemma.setFrequency(rs.getInt("frequency"));
-                lemma.setLemma(rs.getString("lemma"));
-                lemma.setSiteId(rs.getInt("site_id"));
-                return lemma;
-            }
+        List<LemmaEntity> lemmasList = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            LemmaEntity lemma = new LemmaEntity();
+            lemma.setId(rs.getInt("id"));
+            lemma.setFrequency(rs.getInt("frequency"));
+            lemma.setLemma(rs.getString("lemma"));
+            lemma.setSiteId(rs.getInt("site_id"));
+            return lemma;
         }, siteId.toString());
         //добавляю леммы из БД в HashSet
         lemmasFromDB.addAll(lemmasList);
@@ -86,9 +80,8 @@ public class LemmaCRUDService {
                     ps.setString(2, lemmaEntity.getLemma());
                     ps.setInt(3, lemmaEntity.getFrequency());
                 });
-        HashSet<LemmaEntity> lemmasFromDB = findByLemmaAndSiteId(lemmas);
 
-        return lemmasFromDB;
+        return findByLemmaAndSiteId(lemmas);
     }
 
     public HashSet<LemmaEntity> updateAll(HashSet<LemmaEntity> lemmas) {
@@ -99,20 +92,9 @@ public class LemmaCRUDService {
                     ps.setInt(1, lemmaEntity.getFrequency());
                     ps.setInt(2, lemmaEntity.getId());
                 });
-        HashSet<LemmaEntity> lemmasFromDB = findByLemmaAndSiteId(lemmas);
 
-        return lemmasFromDB;
+        return findByLemmaAndSiteId(lemmas);
     }
-
-/*
-        // Преобразуем список в HashSet
-        HashSet<LemmaEntity> lemmasFromDB = new HashSet<>(lemmasList);
-
-        return lemmasFromDB;
-
-        return lemmasFromDB;
-    }
-*/
 
     public LemmaEntity findById(int lemmaId) {
         Optional<LemmaEntity> lemma = lemmaRepository.findById(lemmaId);

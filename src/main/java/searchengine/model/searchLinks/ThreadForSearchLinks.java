@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.HttpStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import searchengine.config.Site;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.SiteEntity;

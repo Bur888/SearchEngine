@@ -47,13 +47,10 @@ public class PageCRUDService {
         List<PageToDto> pageToDtoList = jdbcTemplate.query(
                 "SELECT * FROM search_engine.page WHERE path = ? AND site_id = ?",
                 new Object[]{url, siteId},
-                new RowMapper<PageToDto>() {
-                    @Override
-                    public PageToDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        PageToDto pageToDto = new PageToDto();
-                        pageToDto.setId(rs.getInt("id"));
-                        return pageToDto;
-                    }
+                (rs, rowNum) -> {
+                    PageToDto pageToDto = new PageToDto();
+                    pageToDto.setId(rs.getInt("id"));
+                    return pageToDto;
                 }
         );
         return !pageToDtoList.isEmpty();

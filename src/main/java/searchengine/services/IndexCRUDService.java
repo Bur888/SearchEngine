@@ -11,7 +11,6 @@ import searchengine.repository.IndexRepository;
 
 import java.sql.PreparedStatement;
 import java.util.HashSet;
-import java.util.List;
 
 @Service
 public class IndexCRUDService {
@@ -59,12 +58,6 @@ public class IndexCRUDService {
         return indexRepository.findOneByPageIdAndLemmaId(pageId, lemmaId);
     }
 
-/*
-    public List<LemmaEntity> findLemmasByPageId(int pageId) {
-        return indexRepository.findLemmasByPageId(pageId);
-    }
-*/
-
     public IndexToDto mapToDto(IndexEntity index) {
         IndexToDto indexToDto = new IndexToDto();
         indexToDto.setId(index.getId());
@@ -90,8 +83,6 @@ public class IndexCRUDService {
                                               Integer countThisWord,
                                               Integer countWordOnPage) {
         IndexEntity index = new IndexEntity();
-        //LemmaEntity newLemma = lemmaCRUDService.findByLemmaAndSiteId(lemma.getLemma(), lemma.getSiteId());
-        //index.setLemma(newLemma);
         index.setLemma(lemma);
         index.setPage(pageEntity);
         float rank = IndexEntity.calculateRankValue(countThisWord, countWordOnPage);

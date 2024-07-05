@@ -2,7 +2,6 @@ package searchengine.model.entityes;
 
 import lombok.Getter;
 import lombok.Setter;
-import searchengine.dto.entityesToDto.PageToDto;
 
 import javax.persistence.*;
 import java.util.List;

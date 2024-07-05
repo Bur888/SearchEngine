@@ -13,8 +13,6 @@ import searchengine.model.entityes.PageEntity;
 import searchengine.services.IndexCRUDService;
 import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.util.*;
 

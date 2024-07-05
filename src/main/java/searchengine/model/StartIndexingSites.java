@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import searchengine.config.SitesList;
 import searchengine.dto.entityesToDto.PageToDto;
-import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
 import searchengine.model.searchLinks.Link;
 import searchengine.model.searchLinks.ParseWebRecursive;
 import searchengine.model.searchLinks.ThreadForSavePageAndSiteInDB;
@@ -26,8 +25,6 @@ public class StartIndexingSites implements Runnable {
     @Autowired
     private SitesList sitesList;
     private JdbcTemplate jdbcTemplate;
-    private ThreadForSavePageAndSiteInDB savePageAndSiteInDB;
-    private ArrayList<ParseWebRecursive> tasks = new ArrayList<>();
     @Getter
     @Setter
     private static ArrayList<Thread> threads = new ArrayList<>();

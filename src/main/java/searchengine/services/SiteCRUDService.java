@@ -28,21 +28,15 @@ public class SiteCRUDService {
 
     public SiteEntity getById(Integer id) {
         Optional<SiteEntity> site = siteRepository.findById(id);
-        if (site.isPresent()) {
-            return site.get();
-        }
-        return null;
+        return site.orElse(null);
     }
     public Integer getIdByUrl(String url) {
         //TODO здесь переписать код. Запрос попробовать прописать в репозитории через анотацию Query
        List<SiteEntity> siteList = jdbcTemplate.query(
-               "SELECT * FROM search_engine.site where url = ?", new RowMapper<SiteEntity>() {
-                   @Override
-                   public SiteEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-                       SiteEntity siteEntity = new SiteEntity();
-                       siteEntity.setId(rs.getInt("id"));
-                       return siteEntity;
-                   }
+               "SELECT * FROM search_engine.site where url = ?", (rs, rowNum) -> {
+                   SiteEntity siteEntity = new SiteEntity();
+                   siteEntity.setId(rs.getInt("id"));
+                   return siteEntity;
                }, url);
         if (siteList.isEmpty()) {
             return null;
