@@ -2,9 +2,11 @@ package searchengine.model.entityes;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jsoup.nodes.Document;
+import searchengine.dto.entityesToDto.PageToDto;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -19,7 +21,7 @@ public class PageEntity {
     @JoinColumn(name = "site_id", nullable = false)
     private SiteEntity site;
 
-    @Column//(columnDefinition = "TEXT NOT NULL, Index(path(512))")
+    @Column(columnDefinition = "TEXT NOT NULL, Index(path(512))")
     private String path;
 
     @Column(nullable = false)
@@ -27,4 +29,31 @@ public class PageEntity {
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
+
+    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL)
+    private List<IndexEntity> indexes;
+
+    public static PageEntity makePageEntityForSave(SiteEntity site, String url, String document, Integer code) {
+        PageEntity pageEntity = new PageEntity();
+        pageEntity.setSite(site);
+        pageEntity.setPath(url);
+        pageEntity.setContent(String.valueOf(document));
+        pageEntity.setCode(code);
+        return pageEntity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PageEntity page = (PageEntity) o;
+        return Objects.equals(site.getId(), page.site.getId()) && path.equals(page.getPath());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = path == null ? 0 : path.hashCode();
+        result = 31 * result + site.getId();
+        return result;
+    }
 }

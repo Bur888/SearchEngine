@@ -7,18 +7,14 @@ import org.springframework.stereotype.Service;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.PageEntity;
 import searchengine.model.entityes.SiteEntity;
-import searchengine.model.searchLinks.Link;
-import searchengine.model.searchLinks.ThreadForSavePageAndSiteInDB;
 import searchengine.repository.PageRepository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 
@@ -28,29 +24,26 @@ public class PageCRUDService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private SiteCRUDService siteCRUDService;
-    private PageRepository pageRepository;
+    private static SiteCRUDService siteCRUDService;
+    private static PageRepository pageRepository;
 
     @Autowired
     public PageCRUDService(SiteCRUDService siteCRUDService, PageRepository pageRepository) {
-        this.siteCRUDService = siteCRUDService;
-        this.pageRepository = pageRepository;
+        PageCRUDService.siteCRUDService = siteCRUDService;
+        PageCRUDService.pageRepository = pageRepository;
     }
 
-    public PageEntity getById(Integer id) {
+    public PageEntity findById(Integer id) {
         Optional<PageEntity> pageOptional = pageRepository.findById(id);
-        if (pageOptional.isPresent()) {
-            return pageOptional.get();
-        }
-        return null;
+        return pageOptional.orElse(null);
     }
 
-    public void savePage(PageToDto pageToDto) {
-        PageEntity page = mapToEntity(pageToDto);
-        pageRepository.save(page);
+    public void save(PageEntity pageEntity) {
+        pageRepository.save(pageEntity);
     }
 
     public boolean isUrlInDB(String url, Integer siteId) {
+        //TODO здесь переписать код. Запрос попробовать прописать в репозитории через анотацию Query
         List<PageToDto> pageToDtoList = jdbcTemplate.query(
                 "SELECT * FROM search_engine.page WHERE path = ? AND site_id = ?",
                 new Object[]{url, siteId},
@@ -76,9 +69,9 @@ public class PageCRUDService {
         return pageToDto;
     }
 
-    public PageEntity mapToEntity(PageToDto pageToDto) {
+    public static PageEntity mapToEntity(PageToDto pageToDto) {
         PageEntity pageEntity = new PageEntity();
-        pageEntity.setId(pageEntity.getId());
+        pageEntity.setId(pageToDto.getId());
         SiteEntity siteEntity = siteCRUDService.getById(pageToDto.getSiteId());
         pageEntity.setSite(siteEntity);
         pageEntity.setPath(pageToDto.getPath());
@@ -100,17 +93,36 @@ public class PageCRUDService {
                 });
     }
     public void saveAndRemove(ArrayList<PageToDto> list) {
-        //ArrayList<PageToDto> pageToDtoArrayList = (ArrayList<PageToDto>) list.clone();
         Logger.getLogger("PageCRUDService")
                 .info("Размер эррэйлиста " + list.size());
         saveAll(list);
         Logger.getLogger("PageCRUDService")
                 .info("Произведено сохранение PageToDTOList в DB size " + list.size());
         Logger.getLogger("PageCRUDService")
-                .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoList().size());
-        PageToDto.removePagesToDtoFromList(list.size());
+                .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoHashMap().size());
+        PageToDto.removePagesToDtoFromHashMap(list);
         Logger.getLogger("SavePageAndSiteInDBPageCRUDService")
-                .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoList().size());
+                .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoHashMap().size());
+    }
+
+    public PageEntity findOneByPathAndSiteId(String url, int siteId) {
+        return pageRepository.findOneByPathAndSiteId(url, siteId);
+    }
+
+    public void delete(PageEntity pageEntity) {
+        pageRepository.delete(pageEntity);
+    }
+
+    public List<PageEntity> findAllMoreThenStartId(int startId) {
+        return pageRepository.findAllMoreThenStartId(startId);
+    }
+
+    public List<PageEntity> findAll() {
+        return pageRepository.findAll();
+    }
+
+    public Integer getCountPagesOnSite(int siteId) {
+        return pageRepository.getCountPagesOnSite(siteId);
     }
 }
 

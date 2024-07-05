@@ -3,6 +3,7 @@ package searchengine.model.searchLinks;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
 import searchengine.services.SiteCRUDService;
 
@@ -18,19 +19,21 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
     @Getter
     @Setter
     private static boolean stopNow;
-
-    @Autowired
     private SiteCRUDService siteCRUDService;
     private PageCRUDService pageCRUDService;
+    private LemmaCRUDService lemmaCRUDService;
 
     @Getter
     @Setter
     private Link link;
 
     @Autowired
-    public ParseWebRecursive(SiteCRUDService siteCRUDService, PageCRUDService pageCRUDService) {
+    public ParseWebRecursive(SiteCRUDService siteCRUDService,
+                             PageCRUDService pageCRUDService,
+                             LemmaCRUDService lemmaCRUDService) {
         this.siteCRUDService = siteCRUDService;
         this.pageCRUDService = pageCRUDService;
+        this.lemmaCRUDService = lemmaCRUDService;
     }
 
     @Override
@@ -45,13 +48,13 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
             throw new RuntimeException(e);
         }
 
-        ParseWeb parseWed = new ParseWeb(siteCRUDService, pageCRUDService);
+        ParseWeb parseWed = new ParseWeb(siteCRUDService, pageCRUDService, lemmaCRUDService);
         parseWed.setLink(link);
         ArrayList<Link> links = parseWed.getLinksOnUrl();
         link.setLinks(links);
         List<ParseWebRecursive> taskList = new ArrayList<>();
         for (Link link : links) {
-            ParseWebRecursive task = new ParseWebRecursive(siteCRUDService, pageCRUDService);
+            ParseWebRecursive task = new ParseWebRecursive(siteCRUDService, pageCRUDService, lemmaCRUDService);
             task.setLink(link);
             task.fork();
             taskList.add(task);

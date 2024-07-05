@@ -7,13 +7,14 @@ spring:
     password: Zhuchkov777@yandex.ru
     url: jdbc:mysql://localhost:3306/search_engine?useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
   jpa:
-    properties:
-     hibernate: 12
-    dialect: org.hibernate.dialect.MySQLDialect
+   properties:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    open-in-view: false
+       dialect: org.hibernate.dialect.MySQL8Dialect
+   hibernate:
+     ddl-auto: update
+     #globally_quoted_identifiers: true
+   show-sql: true
+   open-in-view: false
 
 logging:
   level:
@@ -21,24 +22,24 @@ logging:
 
 indexing-settings:
   sites:
-    #️ - url: http://www.playback.ru
-    #️   name: playback
+    #️- url: http://www.playback.ru
+    #️  name: playback
     #️- url: https://lenta.ru
     #️ name: lenta
-      #️ - url: http://radiomv.ru
-    #️   name: radio
-    - url: https://dombulgakova.ru
-      name: dombulgakova
+    - url: http://radiomv.ru
+      name: radio
+    #️- url: https://dombulgakova.ru
+    #️ name: dombulgakova
     - url: https://sendel.ru
       name: sendel
-   #️ - url: https://volochek.life
-      #️ name: volochek
+      #- url: https://volochek.life
+      #  name: volochek
       #️ - url: https://ipfran.ru/
     #️  name: ipfran
       #️ - url: https://dimonvideo.ru/
     #️   name: dimonvideo
-      #️ - url: https://nikoartgallery.com/
-    #️   name: nikoartgallery
+    - url: https://nikoartgallery.com/
+      name: nikoartgallery
       #️ - url: https://et-cetera.ru/mobile/
     #️   name: et-cetera
       #️  - url: https://www.lutherancathedral.ru/

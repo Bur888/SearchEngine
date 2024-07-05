@@ -1,6 +1,7 @@
 package searchengine.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchengine.config.Site;
 import searchengine.config.SitesList;
@@ -9,6 +10,7 @@ import searchengine.dto.statistics.StatisticsData;
 import searchengine.dto.statistics.StatisticsResponse;
 import searchengine.dto.statistics.TotalStatistics;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,8 +19,14 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-    private final Random random = new Random();
+    //private final Random random = new Random();
     private final SitesList sites;
+    @Autowired
+    private PageCRUDService pageCRUDService;
+    @Autowired
+    private SiteCRUDService siteCRUDService;
+    @Autowired
+    private LemmaCRUDService lemmaCRUDService;
 
     @Override
     public StatisticsResponse getStatistics() {
@@ -40,14 +48,15 @@ public class StatisticsServiceImpl implements StatisticsService {
             DetailedStatisticsItem item = new DetailedStatisticsItem();
             item.setName(site.getName());
             item.setUrl(site.getUrl());
-            int pages = random.nextInt(1_000);
-            int lemmas = pages * random.nextInt(1_000);
+            int siteId = siteCRUDService.getIdByUrl(site.getUrl());
+            int pages = pageCRUDService.getCountPagesOnSite(siteId);
+            int lemmas = lemmaCRUDService.getCountLemmasOnSite(siteId);
             item.setPages(pages);
             item.setLemmas(lemmas);
-            item.setStatus(statuses[i % 3]);
-            item.setError(errors[i % 3]);
-            item.setStatusTime(System.currentTimeMillis() -
-                    (random.nextInt(10_000)));
+            item.setStatus(siteCRUDService.getStatusIndexing(siteId));
+            item.setError(siteCRUDService.getErrorIndexing(siteId));
+            item.setStatusTime(siteCRUDService.getStatusTimeIndexing(siteId)
+                    .atZone(ZoneId.of("Europe/Moscow")).toInstant().toEpochMilli());
             total.setPages(total.getPages() + pages);
             total.setLemmas(total.getLemmas() + lemmas);
             detailed.add(item);

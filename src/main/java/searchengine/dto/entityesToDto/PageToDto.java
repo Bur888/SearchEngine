@@ -1,14 +1,9 @@
 package searchengine.dto.entityesToDto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import searchengine.model.entityes.SiteEntity;
-import searchengine.model.searchLinks.Link;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 
 @Getter
 @Setter
@@ -21,7 +16,7 @@ public class PageToDto {
     private String content;
     @Getter
     @Setter
-    private static ArrayList<PageToDto> pageToDtoList = new ArrayList<>();
+    private static HashMap<PageToDto, Integer> pageToDtoHashMap = new HashMap<>();
 
 /*
     public static ArrayList<PageToDto> getPageToDtoList() {
@@ -33,7 +28,7 @@ public class PageToDto {
     }
 */
 
-    public PageToDto makePageToDtoForSave(Integer siteId, String url, String document, Integer code) {
+    public static PageToDto makePageToDtoForSave(Integer siteId, String url, String document, Integer code) {
         PageToDto pageToDto = new PageToDto();
         pageToDto.setSiteId(siteId);
         pageToDto.setPath(url);
@@ -41,10 +36,33 @@ public class PageToDto {
         pageToDto.setCode(code);
         return pageToDto;
     }
-    public static void removePagesToDtoFromList(int count) {
-        for (int i = 0; i < count; i++) {
-            pageToDtoList.remove(0);
+
+    public static void removePagesToDtoFromHashMap(ArrayList<PageToDto> pages) {
+        for (PageToDto page : pages) {
+           if(pageToDtoHashMap.containsKey(page)) {
+               pageToDtoHashMap.remove(page);
+           }
         }
+    }
+    public static ArrayList<PageToDto> getPageToDtoArrayList() {
+        ArrayList<PageToDto> list = new ArrayList<>();
+        list.addAll(pageToDtoHashMap.keySet());
+        return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        PageToDto page = (PageToDto) o;
+        return this.siteId == page.getSiteId() && Objects.equals(this.path, page.getPath());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = path == null ? 0 : path.hashCode();
+        result = 31 * result + siteId;
+        return result;
     }
 }
 

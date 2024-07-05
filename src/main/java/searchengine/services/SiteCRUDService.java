@@ -1,7 +1,6 @@
 package searchengine.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class SiteCRUDService {
@@ -36,6 +34,7 @@ public class SiteCRUDService {
         return null;
     }
     public Integer getIdByUrl(String url) {
+        //TODO здесь переписать код. Запрос попробовать прописать в репозитории через анотацию Query
        List<SiteEntity> siteList = jdbcTemplate.query(
                "SELECT * FROM search_engine.site where url = ?", new RowMapper<SiteEntity>() {
                    @Override
@@ -58,10 +57,26 @@ public class SiteCRUDService {
     public void save(SiteEntity site) {
         siteRepository.save(site);
     }
+
     public SiteEntity getByUrl(String url) {
-        List<SiteEntity> siteEntityList = siteRepository.getByUrl(url);
+        List<SiteEntity> siteEntityList = siteRepository.findAllByUrl(url);
+        if (siteEntityList.isEmpty()) {
+            return null;
+        }
         return siteEntityList.get(0);
     }
+
+    public String getStatusIndexing(int siteId) {
+        return siteRepository.getStatusIndexing(siteId);
+    }
+    public String getErrorIndexing(int siteId){
+        return siteRepository.getErrorIndexing(siteId);
+    }
+
+    public LocalDateTime getStatusTimeIndexing(int siteId) {
+        return siteRepository.getStatusTimeIndexing(siteId);
+    }
+
     public void updateWithFailedStatus(String url, String error) {
         SiteEntity siteEntity = getByUrl(url);
         siteEntity.setStatusTime(LocalDateTime.now());

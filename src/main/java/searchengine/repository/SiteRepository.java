@@ -5,16 +5,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import searchengine.model.entityes.SiteEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SiteRepository extends JpaRepository<SiteEntity, Integer> {
 
-    @Query(value = "SELECT * FROM search_engine.site s where s.url = ?1",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM search_engine.site s WHERE s.url = ?1", nativeQuery = true)
+    List<SiteEntity> findAllByUrl(String url);
 
-           // "SELECT s FROM site s where s.url = ?1")
-    public List<SiteEntity> getByUrl(String url);
+    @Query(value = "SELECT s.status_indexing FROM search_engine.site s WHERE id = ?1", nativeQuery = true)
+    String getStatusIndexing(int siteId);
 
+    @Query(value = "SELECT s.last_error FROM search_engine.site s WHERE id = ?1", nativeQuery = true)
+    String getErrorIndexing(int siteId);
+
+    @Query(value = "SELECT s.status_time FROM search_engine.site s WHERE id = ?1", nativeQuery = true)
+    LocalDateTime getStatusTimeIndexing(int siteId);
+
+    @Override
+    void deleteAll();
 }
