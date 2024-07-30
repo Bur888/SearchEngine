@@ -11,6 +11,7 @@ import searchengine.repository.IndexRepository;
 
 import java.sql.PreparedStatement;
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class IndexCRUDService {
@@ -48,11 +49,10 @@ public class IndexCRUDService {
                     ps.setFloat(3, indexEntity.getRank());
                 });
     }
-/*
-    public void saveAll(HashSet<IndexEntity> indexes) {
-        indexRepository.saveAll(indexes);
+
+    public boolean containsPageIdAndLemmaIdInDB(int pageId, int lemmaId) {
+        return indexRepository.getPageIdAndLemmaIdInDB(pageId, lemmaId) != null;
     }
-*/
 
     public IndexEntity findByPageIdAndLemmaId(int pageId, int lemmaId) {
         return indexRepository.findOneByPageIdAndLemmaId(pageId, lemmaId);

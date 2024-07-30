@@ -31,7 +31,8 @@ public class SiteCRUDService {
         return site.orElse(null);
     }
     public Integer getIdByUrl(String url) {
-        //TODO здесь переписать код. Запрос попробовать прописать в репозитории через анотацию Query
+        return siteRepository.getIdByUrl(url);
+/*
        List<SiteEntity> siteList = jdbcTemplate.query(
                "SELECT * FROM search_engine.site where url = ?", (rs, rowNum) -> {
                    SiteEntity siteEntity = new SiteEntity();
@@ -42,6 +43,7 @@ public class SiteCRUDService {
             return null;
         }
         return siteList.get(0).getId();
+*/
     }
 
     public void deleteById(Integer id) {

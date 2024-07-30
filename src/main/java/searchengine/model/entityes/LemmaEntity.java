@@ -47,4 +47,8 @@ public class LemmaEntity {
         result = 31 * result + siteId;
         return result;
     }
+
+    public int compareTo(LemmaEntity o2) {
+        return Integer.compare(this.siteId, o2.getSiteId());
+    }
 }

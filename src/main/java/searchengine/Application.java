@@ -18,6 +18,7 @@ public class Application {
         List<String> wordBaseForms =
                 luceneMorph.getNormalForms("леса");
         wordBaseForms.forEach(System.out::println);
+        //TODO не работает поиск по одному сайту
+
     }
-    //TODO проработать индексации одной страницы (удалить и запустить индексацию)
 }

@@ -11,10 +11,17 @@ import java.util.List;
 
 @Repository
 public interface LemmaRepository extends JpaRepository<LemmaEntity, Integer> {
-        @Query(value = "SELECT * FROM search_engine.lemma l WHERE l.lemma = ?1 and l.site_id = ?2 LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM search_engine.lemma l WHERE l.lemma = ?1 and l.site_id = ?2 LIMIT 1", nativeQuery = true)
     LemmaEntity findOneByLemmaAndSiteId(String lemma, int siteId);
 
+    List<LemmaEntity> findAllByLemma(String lemma);
+
+    //List<LemmaEntity> findAllByLemmaIn(List<String> lemmas);
+
     List<LemmaEntity> findAllBySiteId(int siteId);
+
+    @Query(value = "SELECT * FROM search_engine.lemma l WHERE l.lemma = ?1 and l.site_id = ?2 LIMIT 1", nativeQuery = true)
+    int findIdBySite(String site);
 
     @Query(value = "SELECT l.* FROM search_engine.lemma l " +
             "JOIN search_engine.index i ON i.lemma_id = l.id " +
@@ -26,4 +33,7 @@ public interface LemmaRepository extends JpaRepository<LemmaEntity, Integer> {
 
     @Query(value = "SELECT COUNT(*) FROM search_engine.lemma l WHERE l.site_id = :siteId", nativeQuery = true)
     Integer getCountLemmasOnSite(@Param("siteId") int siteId);
+
+    @Query(value = "SELECT l.frequency FROM search_engine.lemma l WHERE l.lemma = ?1", nativeQuery = true)
+    Integer getCountPagesWithLemma(String lemma);
 }

@@ -39,14 +39,11 @@ public class PageToDto {
 
     public static void removePagesToDtoFromHashMap(ArrayList<PageToDto> pages) {
         for (PageToDto page : pages) {
-           if(pageToDtoHashMap.containsKey(page)) {
-               pageToDtoHashMap.remove(page);
-           }
+            pageToDtoHashMap.remove(page);
         }
     }
     public static ArrayList<PageToDto> getPageToDtoArrayList() {
-        ArrayList<PageToDto> list = new ArrayList<>();
-        list.addAll(pageToDtoHashMap.keySet());
+        ArrayList<PageToDto> list = new ArrayList<>(pageToDtoHashMap.keySet());
         return list;
     }
 

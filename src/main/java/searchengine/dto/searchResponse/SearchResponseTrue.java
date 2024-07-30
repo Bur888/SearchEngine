@@ -1,8 +1,10 @@
 package searchengine.dto.searchResponse;
 
+import java.util.List;
+
 @lombok.Data
-public class SearchResponse {
-    private boolean result;
+public class SearchResponseTrue implements SearchResponse {
+    private boolean result = true;
     private int count;
-    private  Data data;
+    private List<Data> data;
 }

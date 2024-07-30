@@ -46,7 +46,7 @@ public class PageEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PageEntity page = (PageEntity) o;
-        return Objects.equals(site.getId(), page.site.getId()) && path.equals(page.getPath());
+        return Objects.equals(site.getId(), page.site.getId()) && Objects.equals(path, page.getPath());
     }
 
     @Override

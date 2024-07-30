@@ -12,7 +12,6 @@ spring:
        dialect: org.hibernate.dialect.MySQL8Dialect
    hibernate:
      ddl-auto: update
-     #globally_quoted_identifiers: true
    show-sql: true
    open-in-view: false
 
@@ -22,10 +21,12 @@ logging:
 
 indexing-settings:
   sites:
-    #️- url: http://www.playback.ru
-    #️  name: playback
+    #️- url: https://www.apple.com
+    #️  name: apple
+    - url: http://www.playback.ru
+      name: playback
     #️- url: https://lenta.ru
-    #️ name: lenta
+    # name: lenta
     - url: http://radiomv.ru
       name: radio
     #️- url: https://dombulgakova.ru
@@ -44,5 +45,5 @@ indexing-settings:
     #️   name: et-cetera
       #️  - url: https://www.lutherancathedral.ru/
     #️  name: lutherancathedral
-      #️ - url: https://www.svetlovka.ru/
-    #️  name: svetlovka
+      #- url: https://www.svetlovka.ru/
+    # name: svetlovka

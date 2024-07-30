@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface SiteRepository extends JpaRepository<SiteEntity, Integer> {
 
+    @Query(value = "SELECT s.id FROM search_engine.site s WHERE s.url = ?1", nativeQuery = true)
+    Integer getIdByUrl(String url);
+
     @Query(value = "SELECT * FROM search_engine.site s WHERE s.url = ?1", nativeQuery = true)
     List<SiteEntity> findAllByUrl(String url);
 

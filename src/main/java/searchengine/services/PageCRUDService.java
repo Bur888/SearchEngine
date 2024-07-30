@@ -2,7 +2,6 @@ package searchengine.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.PageEntity;
@@ -10,8 +9,6 @@ import searchengine.model.entityes.SiteEntity;
 import searchengine.repository.PageRepository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +33,20 @@ public class PageCRUDService {
     public PageEntity findById(Integer id) {
         Optional<PageEntity> pageOptional = pageRepository.findById(id);
         return pageOptional.orElse(null);
+    }
+    public List<PageEntity> findAllByIdIn(List<Integer> pagesId) {
+        return pageRepository.findAllByIdIn(pagesId);
+    }
+
+    public ArrayList<PageEntity> findByLemmaId(int lemmaId) {
+        return pageRepository.findByLemmaId(lemmaId);
+    }
+
+    public ArrayList<PageEntity> findByLemma(String lemma) {
+        return pageRepository.findByLemma(lemma);
+    }
+    public ArrayList<PageEntity> findByLemmaAndSiteId(String lemma, Integer siteId) {
+        return pageRepository.findByLemmaAndSiteId(lemma, siteId);
     }
 
     public void save(PageEntity pageEntity) {
@@ -120,6 +131,14 @@ public class PageCRUDService {
 
     public Integer getCountPagesOnSite(int siteId) {
         return pageRepository.getCountPagesOnSite(siteId);
+    }
+
+    public Integer getCountPagesOnSite(String site) {
+        int siteId = siteCRUDService.getIdByUrl(site);
+        return pageRepository.getCountPagesOnSite(siteId);
+    }
+    public Integer getCountAllPages() {
+        return pageRepository.getCountAllPages();
     }
 }
 
