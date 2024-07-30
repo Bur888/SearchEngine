@@ -20,9 +20,7 @@ Search Engine
 
 ### Шаги установки
 1. **Клонирование репозитория**
-
-   ```sh
-   git clone https://github.com/your-username/search-engine.git
+   git clone https://github.com/Bur888/SearchEngine.git
    cd search-engine
    
 2. **Настройка базы данных**
