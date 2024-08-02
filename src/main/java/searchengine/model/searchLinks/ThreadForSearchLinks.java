@@ -16,17 +16,16 @@ import searchengine.services.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 public class ThreadForSearchLinks implements Runnable {
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
-    private IndexCRUDService indexCRUDService;
-    @Autowired
-    private SaveAllInDb saveAllInDb;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    //@Autowired
+    //private SaveAllInDb saveAllInDb;
     @Getter
     @Setter
     private Site site;

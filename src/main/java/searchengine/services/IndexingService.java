@@ -20,19 +20,21 @@ public class IndexingService {
     @Getter
     @Setter
     private static boolean startIndexingFlag;
-    @Autowired
-    private SiteCRUDService siteCRUDService;
-    @Autowired
-    private PageCRUDService pageCRUDService;
-    @Autowired
-    private LemmaCRUDService lemmaCRUDService;
-    @Autowired
-    private IndexCRUDService indexCRUDService;
-    @Autowired
-    private SitesList sitesList;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    private final SitesList sitesList;
     private Thread startIndexing;
+
+    @Autowired
+    public IndexingService(SiteCRUDService siteCRUDService, PageCRUDService pageCRUDService, LemmaCRUDService lemmaCRUDService, IndexCRUDService indexCRUDService, SitesList sitesList) {
+        this.siteCRUDService = siteCRUDService;
+        this.pageCRUDService = pageCRUDService;
+        this.lemmaCRUDService = lemmaCRUDService;
+        this.indexCRUDService = indexCRUDService;
+        this.sitesList = sitesList;
+    }
 
     public IndexingResponse startIndexing() {
 
@@ -45,7 +47,6 @@ public class IndexingService {
                 pageCRUDService,
                 lemmaCRUDService,
                 indexCRUDService,
-                jdbcTemplate,
                 sitesList));
         startIndexing.start();
         return new IndexingResponseTrue();
@@ -61,16 +62,6 @@ public class IndexingService {
         }
 
         startIndexing.interrupt();
-/*
-        PageToDto.getPageToDtoHashMap().clear();
-        Link.getAllLinks().clear();
-        FindAndSaveLemmaAndIndex.setFinishSave(0);
-        FindAndSaveLemmaAndIndex.setNUM(0);
-        IndexEntity.getIndexes().clear();
-        ThreadForSavePageAndSiteInDB.getPageToDtoArrayList().clear();
-        FindAndSaveLemmaAndIndex.getLemmasExistingInDB().clear();
-        FindAndSaveLemmaAndIndex.getLemmasNotExistingInDB().clear();
-*/
         startIndexingFlag = false;
         return new IndexingResponseTrue();
     }

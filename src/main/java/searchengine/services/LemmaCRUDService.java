@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class LemmaCRUDService {
-    private LemmaRepository lemmaRepository;
-    private SiteCRUDService siteCRUDService;
-    private JdbcTemplate jdbcTemplate;
+    private final LemmaRepository lemmaRepository;
+    private final SiteCRUDService siteCRUDService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public LemmaCRUDService(LemmaRepository lemmaRepository,SiteCRUDService siteCRUDService, JdbcTemplate jdbcTemplate) {

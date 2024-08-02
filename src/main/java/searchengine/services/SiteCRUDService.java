@@ -12,9 +12,8 @@ import java.util.Optional;
 
 @Service
 public class SiteCRUDService {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    private SiteRepository siteRepository;
+
+    private final SiteRepository siteRepository;
     @Autowired
     public SiteCRUDService(SiteRepository siteRepository) {
         this.siteRepository = siteRepository;

@@ -33,8 +33,7 @@ public class PageToDto {
         }
     }
     public synchronized static ArrayList<PageToDto> getPageToDtoArrayList() {
-        ArrayList<PageToDto> list = new ArrayList<>(pageToDtoHashMap.keySet());
-        return list;
+        return new ArrayList<>(pageToDtoHashMap.keySet());
     }
 
     @Override

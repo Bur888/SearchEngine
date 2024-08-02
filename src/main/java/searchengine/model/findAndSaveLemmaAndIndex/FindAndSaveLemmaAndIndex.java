@@ -1,6 +1,5 @@
 package searchengine.model.findAndSaveLemmaAndIndex;
 
-import com.sun.xml.bind.v2.TODO;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.lucene.morphology.english.EnglishLuceneMorphology;

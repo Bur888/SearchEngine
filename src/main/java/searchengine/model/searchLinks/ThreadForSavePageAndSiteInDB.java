@@ -7,21 +7,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.SaveAllInDb;
 import searchengine.model.entityes.IndexEntity;
-import searchengine.model.entityes.SiteEntity;
 import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
 import searchengine.services.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.logging.Logger;
 
 public class ThreadForSavePageAndSiteInDB implements Runnable {
-    private JdbcTemplate jdbcTemplate;
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
-    private IndexCRUDService indexCRUDService;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final IndexCRUDService indexCRUDService;
     @Getter
     @Setter
     private volatile static ArrayList<PageToDto> pageToDtoArrayList = new ArrayList<>();
@@ -30,12 +26,10 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
     public ThreadForSavePageAndSiteInDB(SiteCRUDService siteCRUDService,
                                         PageCRUDService pageCRUDService,
                                         LemmaCRUDService lemmaCRUDService,
-                                        IndexCRUDService indexCRUDService,
-                                        JdbcTemplate jdbcTemplate) {
+                                        IndexCRUDService indexCRUDService) {
         this.siteCRUDService = siteCRUDService;
         this.lemmaCRUDService = lemmaCRUDService;
         this.indexCRUDService = indexCRUDService;
-        this.jdbcTemplate = jdbcTemplate;
         this.pageCRUDService = pageCRUDService;
     }
 
@@ -49,7 +43,7 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
             try {
                 Thread.sleep(3000);
                 if (PageToDto.getPageToDtoHashMap().size() > 100) {
-                    SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
+                   SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
                     saveAllInDb.saveAllInDB(findAndSaveLemmaAndIndex, false);
 /*
                     synchronized (PageToDto.getPageToDtoArrayList()) {
@@ -90,16 +84,6 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
                 break;
             }
         }
-    }
-
-    public HashSet<Integer> getAllSiteId() {
-        int siteId;
-        HashSet<Integer> uniqSiteId = new HashSet<>();
-        for (PageToDto page : pageToDtoArrayList) {
-            siteId = page.getSiteId();
-            uniqSiteId.add(siteId);
-        }
-        return uniqSiteId;
     }
 }
 

@@ -9,10 +9,10 @@ import searchengine.model.SearchWords;
 @Service
 public class SearchService {
 
-    private LemmaCRUDService lemmaCRUDService;
-    private PageCRUDService pageCRUDService;
-    private IndexCRUDService indexCRUDService;
-    private SiteCRUDService siteCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    private final SiteCRUDService siteCRUDService;
 
     @Autowired
     public SearchService(LemmaCRUDService lemmaCRUDService,

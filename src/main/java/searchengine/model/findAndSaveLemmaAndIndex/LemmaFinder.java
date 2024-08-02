@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 
 public class LemmaFinder {
     private LuceneMorphology luceneMorphology;
-    private MultiLuceneMorphology multiLuceneMorphology;
+    private final MultiLuceneMorphology multiLuceneMorphology;
     private static String WORD_TYPE_REGEX = "^[а-яёА-ЯЁa-zA-Z]+$";
     private static String RUS_WORD_TYPE_REGEX = "^[а-яёА-ЯЁ]+$";
     private static final String[] particlesNames = new String[]{"МЕЖД", "ПРЕДЛ", "СОЮЗ"};
-    private static List<String> stopWords = Arrays.asList("a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with");
+    private static final List<String> stopWords = Arrays.asList("a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with");
     public static final Logger logger = LogManager.getLogger(MultiLuceneMorphology.class);
 
     public LemmaFinder(MultiLuceneMorphology multiLuceneMorphology) {
@@ -59,7 +59,7 @@ public class LemmaFinder {
                     lemmas.put(wordBase, lemmas.get(wordBase) + 1);
                 }
             } catch (Exception exception) {
-                //logger.info("Слово " + word + " не проиндексировалось");
+                logger.info("Слово " + word + " не проиндексировалось");
             }
         }
         return lemmas;

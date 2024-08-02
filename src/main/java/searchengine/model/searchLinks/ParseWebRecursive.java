@@ -16,9 +16,9 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
     @Getter
     @Setter
     private static boolean stopNow;
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
 
     @Getter
     @Setter

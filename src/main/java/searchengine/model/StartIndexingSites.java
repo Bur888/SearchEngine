@@ -17,13 +17,11 @@ import java.util.logging.Logger;
 
 public class StartIndexingSites implements Runnable {
 
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
-    private IndexCRUDService indexCRUDService;
-    @Autowired
-    private SitesList sitesList;
-    private JdbcTemplate jdbcTemplate;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    private final SitesList sitesList;
     @Getter
     @Setter
     private static ArrayList<Thread> threads = new ArrayList<>();
@@ -34,13 +32,11 @@ public class StartIndexingSites implements Runnable {
                               PageCRUDService pageCRUDService,
                               LemmaCRUDService lemmaCRUDService,
                               IndexCRUDService indexCRUDService,
-                              JdbcTemplate jdbcTemplate,
                               SitesList sitesList) {
         this.siteCRUDService = siteCRUDService;
         this.pageCRUDService = pageCRUDService;
         this.lemmaCRUDService = lemmaCRUDService;
         this.indexCRUDService = indexCRUDService;
-        this.jdbcTemplate = jdbcTemplate;
         this.sitesList = sitesList;
 
     }
@@ -52,8 +48,7 @@ public class StartIndexingSites implements Runnable {
                 = new Thread(new ThreadForSavePageAndSiteInDB(siteCRUDService,
                                                               pageCRUDService,
                                                               lemmaCRUDService,
-                                                              indexCRUDService,
-                                                              jdbcTemplate));
+                                                              indexCRUDService));
         forSavePageAndSiteInDB.start();
 
         for (Site site : sitesList.getSites()) {

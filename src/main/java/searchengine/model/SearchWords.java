@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 @Component
 public class SearchWords {
 
-    private LemmaCRUDService lemmaCRUDService;
-    private PageCRUDService pageCRUDService;
-    private IndexCRUDService indexCRUDService;
-    private SiteCRUDService siteCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    private final SiteCRUDService siteCRUDService;
     private static double maxPagesPercent = 0.70;
     private LuceneMorphology luceneMorphology;
-    private ArrayList<String> deleteLemmaFromQuery = new ArrayList<>();
+    private final ArrayList<String> deleteLemmaFromQuery = new ArrayList<>();
 
     @Autowired
     public SearchWords(LemmaCRUDService lemmaCRUDService,
@@ -91,7 +91,7 @@ public class SearchWords {
 
             List<Integer> pagesIdForFirstLemma = new ArrayList<>();
             int num = 0;
-            String lastLemma = new String();
+            String lastLemma = "";
             for (Map.Entry<LemmaEntity, Integer> lemmaEntityIntegerEntry : sortLemmas.entrySet()) {
                 LemmaEntity lemma = lemmaEntityIntegerEntry.getKey();
                 if (num == 0) {
@@ -207,11 +207,16 @@ public class SearchWords {
     }
 
     public Map<LemmaEntity, Integer> findOnOneSite(HashMap<String, Integer> lemmas, String site) {
-        return lemmas.keySet().stream()
+        Map<LemmaEntity, Integer> lemmasFromDB = lemmas.keySet().stream()
                 .map(lemma -> Optional.ofNullable(lemmaCRUDService.findByLemmaAndUrl(lemma, site)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toMap(lemmaEntity -> lemmaEntity, LemmaEntity::getFrequency));
+
+        if (lemmasFromDB.size() != lemmas.size()) {
+            lemmasFromDB.put(null, 0);
+        }
+        return lemmasFromDB;
     }
 
     public Map<LemmaEntity, Integer> removeFrequentlyOccurringLemmas(Map<LemmaEntity, Integer> lemmas, int countPages) {

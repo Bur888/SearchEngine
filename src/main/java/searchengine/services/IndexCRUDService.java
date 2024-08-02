@@ -3,10 +3,7 @@ package searchengine.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import searchengine.dto.entityesToDto.IndexToDto;
 import searchengine.model.entityes.IndexEntity;
-import searchengine.model.entityes.LemmaEntity;
-import searchengine.model.entityes.PageEntity;
 import searchengine.repository.IndexRepository;
 import java.sql.PreparedStatement;
 import java.util.HashSet;
@@ -17,7 +14,7 @@ public class IndexCRUDService {
     private final PageCRUDService pageCRUDService;
     private final IndexRepository indexRepository;
     private final LemmaCRUDService lemmaCRUDService;
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public IndexCRUDService(PageCRUDService pageCRUDService,

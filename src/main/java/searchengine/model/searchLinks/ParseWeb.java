@@ -16,16 +16,17 @@ import searchengine.services.SiteCRUDService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParseWeb {
 
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
-    private ConnectionWeb connection = new ConnectionWeb();
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final ConnectionWeb connection = new ConnectionWeb();
     @Getter
     @Setter
     private Link link;
@@ -94,7 +95,7 @@ public class ParseWeb {
             new URL(url).toURI();
             return true;
         } catch (Exception ex) {
-            System.out.println(ex.getStackTrace());
+            System.out.println(Arrays.toString(ex.getStackTrace()));
         }
         return false;
     }
@@ -108,5 +109,4 @@ public class ParseWeb {
     public boolean isUrlInLinksAndDB(String url, Integer siteId) {
         return Link.getAllLinks().contains(url) || pageCRUDService.isUrlInDB(Link.urlWithoutRoot(url), siteId);
     }
-
 }

@@ -1,7 +1,6 @@
 package searchengine.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
@@ -9,7 +8,6 @@ import searchengine.model.searchLinks.Link;
 import searchengine.model.searchLinks.ThreadForSearchLinks;
 import searchengine.services.PageCRUDService;
 import searchengine.services.SiteCRUDService;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;

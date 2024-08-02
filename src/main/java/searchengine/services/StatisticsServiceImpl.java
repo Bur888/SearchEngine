@@ -19,12 +19,17 @@ import java.util.List;
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final SitesList sites;
-    @Autowired
     private PageCRUDService pageCRUDService;
-    @Autowired
     private SiteCRUDService siteCRUDService;
-    @Autowired
     private LemmaCRUDService lemmaCRUDService;
+
+    @Autowired
+    public StatisticsServiceImpl(SitesList sites, PageCRUDService pageCRUDService, SiteCRUDService siteCRUDService, LemmaCRUDService lemmaCRUDService) {
+        this.sites = sites;
+        this.pageCRUDService = pageCRUDService;
+        this.siteCRUDService = siteCRUDService;
+        this.lemmaCRUDService = lemmaCRUDService;
+    }
 
     @Override
     public StatisticsResponse getStatistics() {

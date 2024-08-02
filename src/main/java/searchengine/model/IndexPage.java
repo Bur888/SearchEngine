@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
 
 @Component
 public class IndexPage {
-    private SiteCRUDService siteCRUDService;
-    private PageCRUDService pageCRUDService;
-    private LemmaCRUDService lemmaCRUDService;
-    private IndexCRUDService indexCRUDService;
-    private SitesList sitesList;
+    private final SiteCRUDService siteCRUDService;
+    private final PageCRUDService pageCRUDService;
+    private final LemmaCRUDService lemmaCRUDService;
+    private final IndexCRUDService indexCRUDService;
+    private final SitesList sitesList;
 
     @Autowired
     public IndexPage(SiteCRUDService siteCRUDService,

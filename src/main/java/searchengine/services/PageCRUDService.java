@@ -12,19 +12,17 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class PageCRUDService {
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private static SiteCRUDService siteCRUDService;
     private static PageRepository pageRepository;
 
     @Autowired
-    public PageCRUDService(SiteCRUDService siteCRUDService, PageRepository pageRepository) {
+    public PageCRUDService(JdbcTemplate jdbcTemplate, SiteCRUDService siteCRUDService, PageRepository pageRepository) {
+        this.jdbcTemplate = jdbcTemplate;
         PageCRUDService.siteCRUDService = siteCRUDService;
         PageCRUDService.pageRepository = pageRepository;
     }
@@ -65,27 +63,6 @@ public class PageCRUDService {
                 }
         );
         return !pageToDtoList.isEmpty();
-    }
-
-    public static PageToDto mapToDto(PageEntity pageEntity) {
-        PageToDto pageToDto = new PageToDto();
-        pageToDto.setId(pageEntity.getId());
-        pageToDto.setSiteId(pageEntity.getSite().getId());
-        pageToDto.setPath(pageEntity.getPath());
-        pageToDto.setCode(pageEntity.getCode());
-        pageToDto.setContent(pageEntity.getContent());
-        return pageToDto;
-    }
-
-    public static PageEntity mapToEntity(PageToDto pageToDto) {
-        PageEntity pageEntity = new PageEntity();
-        pageEntity.setId(pageToDto.getId());
-        SiteEntity siteEntity = siteCRUDService.getById(pageToDto.getSiteId());
-        pageEntity.setSite(siteEntity);
-        pageEntity.setPath(pageToDto.getPath());
-        pageEntity.setContent(pageToDto.getContent());
-        pageEntity.setCode(pageToDto.getCode());
-        return pageEntity;
     }
 
     public void saveAll(ArrayList<PageToDto> pageList) {
@@ -133,6 +110,27 @@ public class PageCRUDService {
 
     public Integer getCountAllPages() {
         return pageRepository.getCountAllPages();
+    }
+
+    public static PageToDto mapToDto(PageEntity pageEntity) {
+        PageToDto pageToDto = new PageToDto();
+        pageToDto.setId(pageEntity.getId());
+        pageToDto.setSiteId(pageEntity.getSite().getId());
+        pageToDto.setPath(pageEntity.getPath());
+        pageToDto.setCode(pageEntity.getCode());
+        pageToDto.setContent(pageEntity.getContent());
+        return pageToDto;
+    }
+
+    public static PageEntity mapToEntity(PageToDto pageToDto) {
+        PageEntity pageEntity = new PageEntity();
+        pageEntity.setId(pageToDto.getId());
+        SiteEntity siteEntity = siteCRUDService.getById(pageToDto.getSiteId());
+        pageEntity.setSite(siteEntity);
+        pageEntity.setPath(pageToDto.getPath());
+        pageEntity.setContent(pageToDto.getContent());
+        pageEntity.setCode(pageToDto.getCode());
+        return pageEntity;
     }
 }
 
