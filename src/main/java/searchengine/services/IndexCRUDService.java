@@ -11,19 +11,13 @@ import java.util.HashSet;
 @Service
 public class IndexCRUDService {
 
-    private final PageCRUDService pageCRUDService;
     private final IndexRepository indexRepository;
-    private final LemmaCRUDService lemmaCRUDService;
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public IndexCRUDService(PageCRUDService pageCRUDService,
-                            IndexRepository indexRepository,
-                            LemmaCRUDService lemmaCRUDService,
+    public IndexCRUDService(IndexRepository indexRepository,
                             JdbcTemplate jdbcTemplate) {
-        this.pageCRUDService = pageCRUDService;
         this.indexRepository = indexRepository;
-        this.lemmaCRUDService = lemmaCRUDService;
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -23,18 +23,14 @@ import java.util.regex.Pattern;
 
 public class ParseWeb {
 
-    private final SiteCRUDService siteCRUDService;
     private final PageCRUDService pageCRUDService;
-    private final LemmaCRUDService lemmaCRUDService;
     private final ConnectionWeb connection = new ConnectionWeb();
     @Getter
     @Setter
     private Link link;
 
-    public ParseWeb(SiteCRUDService siteCRUDService, PageCRUDService pageCRUDService, LemmaCRUDService lemmaCRUDService) {
-        this.siteCRUDService = siteCRUDService;
+    public ParseWeb(PageCRUDService pageCRUDService) {
         this.pageCRUDService = pageCRUDService;
-        this.lemmaCRUDService = lemmaCRUDService;
     }
 
     public static final Logger logger = LogManager.getLogger(ParseWeb.class);

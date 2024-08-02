@@ -45,7 +45,7 @@ public class ParseWebRecursive extends RecursiveTask<Link> {
             throw new RuntimeException(e);
         }
 
-        ParseWeb parseWed = new ParseWeb(siteCRUDService, pageCRUDService, lemmaCRUDService);
+        ParseWeb parseWed = new ParseWeb(pageCRUDService);
         parseWed.setLink(link);
         ArrayList<Link> links = parseWed.getLinksOnUrl();
         link.setLinks(links);

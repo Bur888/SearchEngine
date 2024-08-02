@@ -1,7 +1,6 @@
 package searchengine.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.entityes.StatusIndexing;

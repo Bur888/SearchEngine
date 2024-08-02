@@ -104,12 +104,7 @@ public class FindAndSaveLemmaAndIndex {
                             }
                         }
                     }
-/*
 
-                        lemmasExistingInDB.stream()
-                                .filter(lemma -> Objects.equals(lemma, finalLemmaForHashSet))
-                                .forEach(lemma -> lemma.setFrequency(lemma.getFrequency() + 1));
-*/
                     if (isLemmaInLemmasNotExistingInDB) {
                         for (LemmaEntity lemmaIterator : lemmasNotExistingInDB) {
                             if (Objects.equals(lemmaIterator, lemmaForHashSet)) {
@@ -117,12 +112,7 @@ public class FindAndSaveLemmaAndIndex {
                             }
                         }
                     }
-/*
-                        lemmasNotExistingInDB.stream()
-                                .filter(lemma -> Objects.equals(lemma, finalLemmaForHashSet))
-                                .forEach(lemma -> lemma.setFrequency(lemma.getFrequency() + 1));
-                    }
-*/
+
                     if (!isLemmaInLemmasNotExistingInDB && !isLemmaInLemmasExistingInDB) {
                         //toDO понять почему появляется дубляж в леммах
                         LemmaEntity lemmaFromDB = lemmaCRUDService.findByLemmaAndSiteId(entry.getKey(), page.getSite().getId());

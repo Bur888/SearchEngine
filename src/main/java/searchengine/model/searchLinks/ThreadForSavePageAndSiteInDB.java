@@ -3,7 +3,6 @@ package searchengine.model.searchLinks;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.SaveAllInDb;
 import searchengine.model.entityes.IndexEntity;

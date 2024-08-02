@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class PageCRUDService {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private static SiteCRUDService siteCRUDService;
     private static PageRepository pageRepository;
 
