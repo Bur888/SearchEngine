@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import searchengine.model.entityes.PageEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public interface PageRepository extends JpaRepository<PageEntity, Integer> {
     @Query(value = "SELECT * FROM search_engine.page p WHERE p.id > :startId", nativeQuery = true)
     List<PageEntity> findAllMoreThenStartId(@Param("startId") int startId);
 
-    @Query(value = "SELECT * FROM search_engine.page p", nativeQuery = true)
+    @Query(value = "SELECT * FROM search_engine.page", nativeQuery = true)
     List<PageEntity> findAll();
 
     List<PageEntity> findAllByIdIn(List<Integer> pagesId);

@@ -4,20 +4,14 @@ import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import searchengine.dto.searchResponse.SearchResponse;
 import searchengine.model.findAndSaveLemmaAndIndex.LemmaFinder;
 import searchengine.model.entityes.LemmaEntity;
 import searchengine.model.findAndSaveLemmaAndIndex.MultiLuceneMorphology;
 import searchengine.repository.LemmaRepository;
-
 import org.jsoup.nodes.Document;
-
 import java.io.IOException;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -131,6 +125,9 @@ public class LemmaCRUDService {
 
     public void delete(LemmaEntity lemma) {
         lemmaRepository.delete(lemma);
+    }
+    public void deleteAll(List<LemmaEntity> lemmaEntityList) {
+        lemmaRepository.deleteAll(lemmaEntityList);
     }
 
     public List<LemmaEntity> findAllBySiteId(int siteId) {

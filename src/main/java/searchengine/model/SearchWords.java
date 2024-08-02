@@ -230,7 +230,7 @@ public class SearchWords {
                 lemmas.keySet().removeIf(lemmaEntity -> Objects.equals(lemmaEntity.getLemma(), lemma));
             }
         }
-        return lemmas.isEmpty() ? originalLemmas : lemmas ;
+        return lemmas.isEmpty() ? originalLemmas : lemmas;
     }
 
     public String getSnippet(ArrayList<String> queryBaseFormWords, Document document, MultiLuceneMorphology multiLuceneMorphology) {

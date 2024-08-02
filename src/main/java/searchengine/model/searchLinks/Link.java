@@ -3,7 +3,6 @@ package searchengine.model.searchLinks;
 import lombok.Getter;
 import lombok.Setter;
 import searchengine.dto.entityesToDto.PageToDto;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 

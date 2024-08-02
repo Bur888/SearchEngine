@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import searchengine.dto.entityesToDto.PageToDto;
+import searchengine.model.SaveAllInDb;
+import searchengine.model.entityes.IndexEntity;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
 import searchengine.services.*;
@@ -13,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
-
 
 public class ThreadForSavePageAndSiteInDB implements Runnable {
     private JdbcTemplate jdbcTemplate;
@@ -48,22 +49,42 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
             try {
                 Thread.sleep(3000);
                 if (PageToDto.getPageToDtoHashMap().size() > 100) {
-                    pageToDtoArrayList = PageToDto.getPageToDtoArrayList();
-                    pageCRUDService.saveAndRemove(pageToDtoArrayList);
-                    for (Integer siteId : getAllSiteId()) {
-                        SiteEntity siteEntity = siteCRUDService.getById(siteId);
-                        siteEntity.setStatusTime(LocalDateTime.now());
-                        siteCRUDService.save(siteEntity);
-                    }
-                    Link.removeAllLinks(pageToDtoArrayList);
-                    pageToDtoArrayList.clear();
-                    Logger.getLogger("SavePageAndSiteInDB")
-                            .info("Прошел очередной цикл");
-                    synchronized (FindAndSaveLemmaAndIndex.class) {
+                    SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
+                    saveAllInDb.saveAllInDB(findAndSaveLemmaAndIndex, false);
+/*
+                    synchronized (PageToDto.getPageToDtoArrayList()) {
+                        pageToDtoArrayList = PageToDto.getPageToDtoArrayList();
+                        pageCRUDService.saveAndRemove(pageToDtoArrayList);
+
+                        for (Integer siteId : getAllSiteId()) {
+                            SiteEntity siteEntity = siteCRUDService.getById(siteId);
+                            siteEntity.setStatusTime(LocalDateTime.now());
+                            siteCRUDService.save(siteEntity);
+                        }
+
+                        Link.removeAllLinks(pageToDtoArrayList);
+                        pageToDtoArrayList.clear();
+                        Logger.getLogger("SavePageAndSiteInDB")
+                                .info("Прошел очередной цикл");
+
                         findAndSaveLemmaAndIndex.run();
                     }
+*/
                 }
             } catch (InterruptedException e) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                PageToDto.getPageToDtoHashMap().clear();
+                Link.getAllLinks().clear();
+                FindAndSaveLemmaAndIndex.setFinishSave(0);
+                FindAndSaveLemmaAndIndex.setNUM(0);
+                IndexEntity.getIndexes().clear();
+                ThreadForSavePageAndSiteInDB.getPageToDtoArrayList().clear();
+                FindAndSaveLemmaAndIndex.getLemmasExistingInDB().clear();
+                FindAndSaveLemmaAndIndex.getLemmasNotExistingInDB().clear();
                 Logger.getLogger("ThreadForSavePageAndSiteInDB")
                         .info("Прерван параллельный поток в состоянии ожидания");
                 break;

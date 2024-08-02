@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-    //private final Random random = new Random();
     private final SitesList sites;
     @Autowired
     private PageCRUDService pageCRUDService;

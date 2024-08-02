@@ -6,6 +6,9 @@ import org.jsoup.HttpStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import searchengine.config.Site;
 import searchengine.dto.entityesToDto.PageToDto;
+import searchengine.model.SaveAllInDb;
+import searchengine.model.entityes.IndexEntity;
+import searchengine.model.entityes.LemmaEntity;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.entityes.StatusIndexing;
 import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
@@ -14,14 +17,16 @@ import searchengine.services.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
-
 
 public class ThreadForSearchLinks implements Runnable {
     private SiteCRUDService siteCRUDService;
     private PageCRUDService pageCRUDService;
     private LemmaCRUDService lemmaCRUDService;
     private IndexCRUDService indexCRUDService;
+    @Autowired
+    private SaveAllInDb saveAllInDb;
     @Getter
     @Setter
     private Site site;
@@ -45,7 +50,8 @@ public class ThreadForSearchLinks implements Runnable {
             String urlAndRoot = site.getUrl();
             Integer siteId = siteCRUDService.getIdByUrl(site.getUrl());
             if (siteId != null) {
-                lemmaCRUDService.findAllBySiteId(siteId).forEach(lemma -> lemmaCRUDService.delete(lemma));
+                List<LemmaEntity> lemmaEntityList = lemmaCRUDService.findAllBySiteId(siteId);
+                lemmaCRUDService.deleteAll(lemmaEntityList);
                 siteCRUDService.deleteById(siteId);
             }
 
@@ -75,18 +81,19 @@ public class ThreadForSearchLinks implements Runnable {
             Thread.sleep(3100);
             Logger.getLogger(String.valueOf(ThreadForSearchLinks.class))
                     .info("Поиск по ссылке " + urlAndRoot + " завершен");
-            ArrayList<PageToDto> pagesListForSave = PageToDto.getPageToDtoArrayList();
-            pageCRUDService.saveAndRemove(pagesListForSave);
             FindAndSaveLemmaAndIndex findAndSaveLemmaAndIndex
                     = new FindAndSaveLemmaAndIndex(pageCRUDService, lemmaCRUDService, indexCRUDService);
 
-            synchronized (FindAndSaveLemmaAndIndex.class) {
-                findAndSaveLemmaAndIndex.run();
-                FindAndSaveLemmaAndIndex.setFinishSave(FindAndSaveLemmaAndIndex.getFinishSave() - 1);
+            SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
+            saveAllInDb.saveAllInDB(findAndSaveLemmaAndIndex, true);
+            FindAndSaveLemmaAndIndex.setFinishSave(FindAndSaveLemmaAndIndex.getFinishSave() - 1);
+            synchronized (ThreadForSearchLinks.class) {
                 if (FindAndSaveLemmaAndIndex.getFinishSave() == 0) {
                     findAndSaveLemmaAndIndex.saveLemmaAndIndex();
                 }
             }
+            Logger.getLogger(String.valueOf(ThreadForSearchLinks.class))
+                    .info("ссылка " + urlAndRoot + " вышла из синхронизированного потока");
             newSite.setStatusIndexing(StatusIndexing.INDEXED);
             newSite.setStatusTime(LocalDateTime.now());
             siteCRUDService.save(newSite);
@@ -98,6 +105,14 @@ public class ThreadForSearchLinks implements Runnable {
             siteCRUDService.updateWithFailedStatus(site.getUrl(), "Отсутствует соединение");
         } catch (InterruptedException ex) {
             siteCRUDService.updateWithFailedStatus(site.getUrl(), "Индексация остановлена пользователем");
+            PageToDto.getPageToDtoHashMap().clear();
+            Link.getAllLinks().clear();
+            FindAndSaveLemmaAndIndex.setFinishSave(0);
+            FindAndSaveLemmaAndIndex.setNUM(0);
+            IndexEntity.getIndexes().clear();
+            ThreadForSavePageAndSiteInDB.getPageToDtoArrayList().clear();
+            FindAndSaveLemmaAndIndex.getLemmasExistingInDB().clear();
+            FindAndSaveLemmaAndIndex.getLemmasNotExistingInDB().clear();
             Logger.getLogger(String.valueOf(IndexingService.class))
                     .info("Поиск по ссылке " + site.getUrl() + " прерван");
         }

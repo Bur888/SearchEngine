@@ -1,10 +1,7 @@
 package searchengine.model.entityes;
 
-//import searchengine.model.findAndSaveLemmaAndIndex.LemmaFinder;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,26 +31,6 @@ public class IndexEntity {
     @Setter
     private static HashSet<IndexEntity> indexes = new HashSet<>();
 
-    @Setter
-    @Getter
-    private static HashMap<LemmaEntity, Integer> lemmasAndPageId = new HashMap<>();
-
-
-
-/*
-    public static IndexEntity makeIndexEntity(LemmaEntity lemma,
-                                         PageEntity pageEntity,
-                                         Integer countThisWord,
-                                         Integer countWordOnPage) {
-        IndexEntity index = new IndexEntity();
-        index.setLemma(lemma);
-        index.setPage(pageEntity);
-        float rank = calculateRankValue(countThisWord, countWordOnPage);
-        index.setRank(rank);
-        return index;
-    }
-*/
-
     public static int getCountWordsOnPage(HashMap<String, Integer> lemmas) {
         int countWords = 0;
         for (Integer value : lemmas.values()) {
@@ -78,13 +55,5 @@ public class IndexEntity {
     public int hashCode() {
         int result = lemma == null ? 0 : lemma.getLemma().hashCode();
         return page != null ? (31 * result + page.getId()) : 31 * result;
-/*
-        if (page != null) {
-            result = 31 * result + page.getId();
-        } else {
-            result = 31 * result;
-        }
-        return result;
-*/
     }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-
 @Service
 public class PageCRUDService {
 
@@ -34,6 +33,7 @@ public class PageCRUDService {
         Optional<PageEntity> pageOptional = pageRepository.findById(id);
         return pageOptional.orElse(null);
     }
+
     public List<PageEntity> findAllByIdIn(List<Integer> pagesId) {
         return pageRepository.findAllByIdIn(pagesId);
     }
@@ -45,6 +45,7 @@ public class PageCRUDService {
     public ArrayList<PageEntity> findByLemma(String lemma) {
         return pageRepository.findByLemma(lemma);
     }
+
     public ArrayList<PageEntity> findByLemmaAndSiteId(String lemma, Integer siteId) {
         return pageRepository.findByLemmaAndSiteId(lemma, siteId);
     }
@@ -54,7 +55,6 @@ public class PageCRUDService {
     }
 
     public boolean isUrlInDB(String url, Integer siteId) {
-        //TODO здесь переписать код. Запрос попробовать прописать в репозитории через анотацию Query
         List<PageToDto> pageToDtoList = jdbcTemplate.query(
                 "SELECT * FROM search_engine.page WHERE path = ? AND site_id = ?",
                 new Object[]{url, siteId},
@@ -100,17 +100,10 @@ public class PageCRUDService {
                     ps.setString(4, pageToDto.getContent());
                 });
     }
+
     public void saveAndRemove(ArrayList<PageToDto> list) {
-        Logger.getLogger("PageCRUDService")
-                .info("Размер эррэйлиста " + list.size());
         saveAll(list);
-        Logger.getLogger("PageCRUDService")
-                .info("Произведено сохранение PageToDTOList в DB size " + list.size());
-        Logger.getLogger("PageCRUDService")
-                .info("Текущий размер PageToDTOList  " + PageToDto.getPageToDtoHashMap().size());
         PageToDto.removePagesToDtoFromHashMap(list);
-        Logger.getLogger("SavePageAndSiteInDBPageCRUDService")
-                .info("Произведено исключение объектов PageToDTOList. Размеро PageToDTOList после исключения " + PageToDto.getPageToDtoHashMap().size());
     }
 
     public PageEntity findOneByPathAndSiteId(String url, int siteId) {
@@ -137,6 +130,7 @@ public class PageCRUDService {
         int siteId = siteCRUDService.getIdByUrl(site);
         return pageRepository.getCountPagesOnSite(siteId);
     }
+
     public Integer getCountAllPages() {
         return pageRepository.getCountAllPages();
     }

@@ -1,10 +1,7 @@
 package searchengine.model.searchLinks;
 
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.http.HttpStatus;
-import searchengine.dto.entityesToDto.PageToDto;
 
 import java.io.IOException;
 

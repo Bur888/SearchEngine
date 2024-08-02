@@ -6,12 +6,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-
-
 import java.util.*;
-
 import org.apache.logging.log4j.Logger;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +59,7 @@ public class LemmaFinder {
                     lemmas.put(wordBase, lemmas.get(wordBase) + 1);
                 }
             } catch (Exception exception) {
-                logger.info("Слово " + word + " не проиндексировалось");
+                //logger.info("Слово " + word + " не проиндексировалось");
             }
         }
         return lemmas;

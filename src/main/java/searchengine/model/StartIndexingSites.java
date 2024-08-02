@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import searchengine.config.SitesList;
 import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.model.searchLinks.Link;
-import searchengine.model.searchLinks.ParseWebRecursive;
 import searchengine.model.searchLinks.ThreadForSavePageAndSiteInDB;
 import searchengine.model.searchLinks.ThreadForSearchLinks;
 import searchengine.services.*;
@@ -77,15 +76,6 @@ public class StartIndexingSites implements Runnable {
             }
         }
 
-/*
-        while (!FindAndSaveLemmaAndIndex.isFinishSave()) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-*/
         forSavePageAndSiteInDB.interrupt();
         Link.getAllLinks().clear();
         Logger.getLogger(String.valueOf(IndexingService.class))

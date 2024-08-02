@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
 import searchengine.services.SiteCRUDService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 import java.util.logging.Logger;
-
 
 public class ParseWebRecursive extends RecursiveTask<Link> {
 

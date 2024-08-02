@@ -13,7 +13,6 @@ import searchengine.dto.entityesToDto.PageToDto;
 import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
 import searchengine.services.SiteCRUDService;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ public class ParseWeb {
     private PageCRUDService pageCRUDService;
     private LemmaCRUDService lemmaCRUDService;
     private ConnectionWeb connection = new ConnectionWeb();
-
     @Getter
     @Setter
     private Link link;
@@ -63,7 +61,7 @@ public class ParseWeb {
                             && !Objects.equals(newUrl, urlClear)) {
                         Link newLink = new Link(newUrl, link.getSiteId(), link.getRoot());
                         links.add(newLink);
-                        logger.info("По ссылке " + urlClear + " добавлена ссылка " + newUrl);
+                        //logger.info("По ссылке " + urlClear + " добавлена ссылка " + newUrl);
                     }
                 }
             }

@@ -4,7 +4,6 @@ import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import searchengine.config.Site;
 import searchengine.config.SitesList;
@@ -21,7 +20,6 @@ import searchengine.services.IndexCRUDService;
 import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
 import searchengine.services.SiteCRUDService;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;

@@ -1,5 +1,6 @@
 package searchengine.model.findAndSaveLemmaAndIndex;
 
+import com.sun.xml.bind.v2.TODO;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
@@ -12,10 +13,12 @@ import searchengine.model.entityes.IndexEntity;
 import searchengine.model.entityes.LemmaEntity;
 import searchengine.model.entityes.PageEntity;
 import searchengine.services.IndexCRUDService;
+import searchengine.services.IndexingService;
 import searchengine.services.LemmaCRUDService;
 import searchengine.services.PageCRUDService;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Component
 @Getter
@@ -23,7 +26,6 @@ import java.util.*;
 public class FindAndSaveLemmaAndIndex {
     @Getter
     @Setter
-    //private static boolean START_INDEXING_PAGES;
     private static int NUM = 0;
     private static int START_ID = 0;
     private static int END_ID = 0;
@@ -33,8 +35,6 @@ public class FindAndSaveLemmaAndIndex {
     private PageCRUDService pageCRUDService;
     private LemmaCRUDService lemmaCRUDService;
     private IndexCRUDService indexCRUDService;
-    private static ArrayList<LemmaEntity> lemmasForDB = new ArrayList<>();
-    private static HashMap<LemmaEntity, Integer> lemmasForIndexes = new HashMap<>();
     @Getter
     @Setter
     private static HashSet<LemmaEntity> lemmasExistingInDB = new HashSet<>();
@@ -70,7 +70,11 @@ public class FindAndSaveLemmaAndIndex {
     public void findAndSaveLemmaAndIndex(List<PageEntity> pages) {
         try {
             for (PageEntity page : pages) {
-                if(page.getCode() >= 400 && page.getCode() <= 599) {
+                if (!IndexingService.isStartIndexingFlag()) {
+                    NUM = 0;
+                    break;
+                }
+                if (page.getCode() >= 400 && page.getCode() <= 599) {
                     continue;
                 }
                 Document document = Jsoup.parse(page.getContent());
@@ -81,8 +85,8 @@ public class FindAndSaveLemmaAndIndex {
                 LemmaEntity lemmaForHashSet;
                 int countWordOnPage = IndexEntity.getCountWordsOnPage(lemmas);
                 float rank;
-                boolean lemmaInLemmasExistingInDB;
-                boolean lemmaInLemmasNotExistingInDB;
+                boolean isLemmaInLemmasExistingInDB;
+                boolean isLemmaInLemmasNotExistingInDB;
 
 
                 for (Map.Entry<String, Integer> entry : lemmas.entrySet()) {
@@ -91,22 +95,37 @@ public class FindAndSaveLemmaAndIndex {
                     lemmaForHashSet.setSiteId(page.getSite().getId());
 
 
-                    lemmaInLemmasExistingInDB = lemmasExistingInDB.contains(lemmaForHashSet);
-                    lemmaInLemmasNotExistingInDB = lemmasNotExistingInDB.contains(lemmaForHashSet);
+                    isLemmaInLemmasExistingInDB = lemmasExistingInDB.contains(lemmaForHashSet);
+                    isLemmaInLemmasNotExistingInDB = lemmasNotExistingInDB.contains(lemmaForHashSet);
 
-                    if (lemmaInLemmasExistingInDB) {
-                        LemmaEntity finalLemmaForHashSet = lemmaForHashSet;
+                    if (isLemmaInLemmasExistingInDB) {
+                        for (LemmaEntity lemmaIterator : lemmasExistingInDB) {
+                            if (Objects.equals(lemmaIterator, lemmaForHashSet)) {
+                                lemmaIterator.setFrequency(lemmaIterator.getFrequency() + 1);
+                            }
+                        }
+                    }
+/*
+
                         lemmasExistingInDB.stream()
                                 .filter(lemma -> Objects.equals(lemma, finalLemmaForHashSet))
                                 .forEach(lemma -> lemma.setFrequency(lemma.getFrequency() + 1));
+*/
+                    if (isLemmaInLemmasNotExistingInDB) {
+                        for (LemmaEntity lemmaIterator : lemmasNotExistingInDB) {
+                            if (Objects.equals(lemmaIterator, lemmaForHashSet)) {
+                                lemmaIterator.setFrequency(lemmaIterator.getFrequency() + 1);
+                            }
+                        }
                     }
-                    if (lemmaInLemmasNotExistingInDB) {
-                        LemmaEntity finalLemmaForHashSet = lemmaForHashSet;
+/*
                         lemmasNotExistingInDB.stream()
                                 .filter(lemma -> Objects.equals(lemma, finalLemmaForHashSet))
                                 .forEach(lemma -> lemma.setFrequency(lemma.getFrequency() + 1));
                     }
-                    if (!lemmaInLemmasNotExistingInDB && !lemmaInLemmasExistingInDB) {
+*/
+                    if (!isLemmaInLemmasNotExistingInDB && !isLemmaInLemmasExistingInDB) {
+                        //toDO понять почему появляется дубляж в леммах
                         LemmaEntity lemmaFromDB = lemmaCRUDService.findByLemmaAndSiteId(entry.getKey(), page.getSite().getId());
                         if (lemmaFromDB == null) {
                             lemmaForHashSet.setFrequency(1);
@@ -132,11 +151,12 @@ public class FindAndSaveLemmaAndIndex {
                 }
             }
         } catch (IOException ex) {
+            Logger.getLogger(String.valueOf(FindAndSaveLemmaAndIndex.class), "Ошибка в классе " + FindAndSaveLemmaAndIndex.class);
             throw new RuntimeException(ex);
         }
     }
 
-    public void saveLemmaAndIndex() {
+    public synchronized void saveLemmaAndIndex() {
         lemmasNotExistingInDB = lemmaCRUDService.saveAll(lemmasNotExistingInDB);
         lemmasExistingInDB = lemmaCRUDService.updateAll(lemmasExistingInDB);
 

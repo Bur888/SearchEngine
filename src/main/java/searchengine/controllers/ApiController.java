@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import searchengine.dto.searchResponse.SearchResponse;
 import searchengine.dto.searchResponse.SearchResponseFalse;
-import searchengine.dto.searchResponse.SearchResponseTrue;
 import searchengine.dto.statistics.StatisticsResponse;
 import searchengine.services.IndexingService;
 import searchengine.services.SearchService;

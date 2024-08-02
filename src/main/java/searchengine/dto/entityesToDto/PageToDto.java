@@ -18,16 +18,6 @@ public class PageToDto {
     @Setter
     private static HashMap<PageToDto, Integer> pageToDtoHashMap = new HashMap<>();
 
-/*
-    public static ArrayList<PageToDto> getPageToDtoList() {
-        return pageToDtoList;
-    }
-
-    public synchronized static void setPageToDtoList(ArrayList<PageToDto> pageToDtoList) {
-        PageToDto.pageToDtoList = pageToDtoList;
-    }
-*/
-
     public static PageToDto makePageToDtoForSave(Integer siteId, String url, String document, Integer code) {
         PageToDto pageToDto = new PageToDto();
         pageToDto.setSiteId(siteId);
@@ -42,7 +32,7 @@ public class PageToDto {
             pageToDtoHashMap.remove(page);
         }
     }
-    public static ArrayList<PageToDto> getPageToDtoArrayList() {
+    public synchronized static ArrayList<PageToDto> getPageToDtoArrayList() {
         ArrayList<PageToDto> list = new ArrayList<>(pageToDtoHashMap.keySet());
         return list;
     }

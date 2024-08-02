@@ -27,8 +27,8 @@ indexing-settings:
       name: playback
     #️- url: https://lenta.ru
     # name: lenta
-    - url: http://radiomv.ru
-      name: radio
+      #- url: http://radiomv.ru
+      #name: radio
     #️- url: https://dombulgakova.ru
     #️ name: dombulgakova
     - url: https://sendel.ru

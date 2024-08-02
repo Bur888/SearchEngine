@@ -6,9 +6,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import searchengine.model.entityes.IndexEntity;
 
-import java.util.List;
-
-
 @Repository
 public interface IndexRepository extends JpaRepository<IndexEntity, Integer> {
     @Query(value = "SELECT * FROM search_engine.index i WHERE i.page_id = :pageId and i.lemma_id = :lemmaId", nativeQuery = true)

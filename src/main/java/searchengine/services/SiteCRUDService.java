@@ -2,14 +2,10 @@ package searchengine.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import searchengine.model.entityes.SiteEntity;
 import searchengine.model.entityes.StatusIndexing;
 import searchengine.repository.SiteRepository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +14,7 @@ import java.util.Optional;
 public class SiteCRUDService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private SiteRepository siteRepository;
-
     @Autowired
     public SiteCRUDService(SiteRepository siteRepository) {
         this.siteRepository = siteRepository;
@@ -32,18 +26,6 @@ public class SiteCRUDService {
     }
     public Integer getIdByUrl(String url) {
         return siteRepository.getIdByUrl(url);
-/*
-       List<SiteEntity> siteList = jdbcTemplate.query(
-               "SELECT * FROM search_engine.site where url = ?", (rs, rowNum) -> {
-                   SiteEntity siteEntity = new SiteEntity();
-                   siteEntity.setId(rs.getInt("id"));
-                   return siteEntity;
-               }, url);
-        if (siteList.isEmpty()) {
-            return null;
-        }
-        return siteList.get(0).getId();
-*/
     }
 
     public void deleteById(Integer id) {

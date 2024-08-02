@@ -2,7 +2,6 @@ package searchengine.model.entityes;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -28,10 +27,6 @@ public class LemmaEntity {
 
     @OneToMany(mappedBy = "lemma", cascade = CascadeType.ALL)
     private List<IndexEntity> indexes;
-
-    @Setter
-    @Getter
-    private static HashSet<LemmaEntity> lemmasHashSet = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

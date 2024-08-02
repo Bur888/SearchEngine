@@ -1,11 +1,12 @@
 package searchengine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import searchengine.model.entityes.LemmaEntity;
-
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,11 +17,9 @@ public interface LemmaRepository extends JpaRepository<LemmaEntity, Integer> {
 
     List<LemmaEntity> findAllByLemma(String lemma);
 
-    //List<LemmaEntity> findAllByLemmaIn(List<String> lemmas);
-
     List<LemmaEntity> findAllBySiteId(int siteId);
 
-    @Query(value = "SELECT * FROM search_engine.lemma l WHERE l.lemma = ?1 and l.site_id = ?2 LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM search_engine.lemma l WHERE l.lemma = ?1 and l.site_id = ?2", nativeQuery = true)
     int findIdBySite(String site);
 
     @Query(value = "SELECT l.* FROM search_engine.lemma l " +
