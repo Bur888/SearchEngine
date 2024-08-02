@@ -114,7 +114,6 @@ public class FindAndSaveLemmaAndIndex {
                     }
 
                     if (!isLemmaInLemmasNotExistingInDB && !isLemmaInLemmasExistingInDB) {
-                        //toDO понять почему появляется дубляж в леммах
                         LemmaEntity lemmaFromDB = lemmaCRUDService.findByLemmaAndSiteId(entry.getKey(), page.getSite().getId());
                         if (lemmaFromDB == null) {
                             lemmaForHashSet.setFrequency(1);
