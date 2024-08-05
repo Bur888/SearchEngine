@@ -182,9 +182,12 @@ public class SearchWords {
                     })
                     .collect(Collectors.toList());
             SearchResponseTrue searchResponseTrue = new SearchResponseTrue();
-            searchResponseTrue.setData(datas);
+            if (offset + limit < datas.size()) {
+                searchResponseTrue.setData(datas.subList(offset, offset + limit));
+            } else {
+                searchResponseTrue.setData(datas.subList(offset, datas.size()));
+            }
             searchResponseTrue.setCount(datas.size());
-
             return searchResponseTrue;
 
         } catch (IOException e) {
