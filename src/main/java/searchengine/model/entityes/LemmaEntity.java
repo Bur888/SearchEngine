@@ -10,7 +10,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "lemma")
-public class LemmaEntity {
+public class LemmaEntity implements Comparable<LemmaEntity>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -43,6 +43,24 @@ public class LemmaEntity {
     }
 
     public int compareTo(LemmaEntity o2) {
+        int frequencyComparison = Integer.compare(this.frequency, o2.getFrequency());
+        if (frequencyComparison != 0) {
+            return frequencyComparison;
+        }
+        int lemmaComparison = this.lemma.compareTo(o2.getLemma());
+        if (lemmaComparison != 0) {
+            return lemmaComparison;
+        }
         return Integer.compare(this.siteId, o2.getSiteId());
     }
+
+/*
+    public int compareTo(LemmaEntity o2) {
+        int siteIdComparison = Integer.compare(this.siteId, o2.getSiteId());
+        if (siteIdComparison != 0) {
+            return siteIdComparison;
+        }
+        return this.lemma.compareTo(o2.getLemma());
+    }
+*/
 }

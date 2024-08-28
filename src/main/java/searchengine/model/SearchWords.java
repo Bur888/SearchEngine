@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@Component
 public class SearchWords {
 
     private final LemmaCRUDService lemmaCRUDService;
@@ -60,7 +59,7 @@ public class SearchWords {
             HashMap<String, Integer> lemmas = lemmaFinder.getLemmas(queryDoc);
 
             if (lemmas.isEmpty()) {
-                return new SearchResponseFalse("По указанному запросу ничего не найдено");
+                return new SearchResponseFalse("Запрос задан некорректно, ничего не найдено");
             }
 
             Map<LemmaEntity, Integer> lemmasFromDB;
@@ -80,13 +79,10 @@ public class SearchWords {
 
             //создаем TreeMap и прописываем условия сортировки
             Map<LemmaEntity, Integer> finalLemmasFromDB1 = lemmasFromDB;
-            Map<LemmaEntity, Integer> sortLemmas = new TreeMap<>((o1, o2) -> {
-                int result = finalLemmasFromDB1.get(o1).compareTo(finalLemmasFromDB1.get(o2));
-                if (result == 0) {
-                    result = o1.compareTo(o2);
-                }
-                return result;
-            });
+            Map<LemmaEntity, Integer> sortLemmas = new TreeMap<>(Comparator
+                    .comparingInt(LemmaEntity::getFrequency)
+                    .thenComparing(LemmaEntity::getLemma)
+                    .thenComparingInt(LemmaEntity::getSiteId));
             sortLemmas.putAll(lemmasFromDB);
 
             List<Integer> pagesIdForFirstLemma = new ArrayList<>();
@@ -99,11 +95,13 @@ public class SearchWords {
                         pagesIdForFirstLemma = pageCRUDService.findByLemma(lemma.getLemma())
                                 .stream()
                                 .map(PageEntity::getId)
+                                .limit(100)
                                 .toList();
                     } else {
                         pagesIdForFirstLemma = pageCRUDService.findByLemmaAndSiteId(lemma.getLemma(), lemma.getSiteId())
                                 .stream()
                                 .map(PageEntity::getId)
+                                .limit(100)
                                 .toList();
                     }
                     num++;
@@ -122,6 +120,12 @@ public class SearchWords {
                 pagesIdForFirstLemma = modifiablePagesIdForFirstLemma;
                 lastLemma = lemma.getLemma();
             }
+
+            if (pagesIdForFirstLemma.isEmpty()) {
+                return new SearchResponseFalse("Наличие всех слов запроса на какой либо странице " +
+                        "интересующих сайтов не найдено");
+            }
+
             List<PageEntity> pages = pageCRUDService.findAllByIdIn(pagesIdForFirstLemma);
             if (pages.isEmpty()) {
                 SearchResponseTrue responseTrue = new SearchResponseTrue();
@@ -238,7 +242,12 @@ public class SearchWords {
                 lemmas.keySet().removeIf(lemmaEntity -> Objects.equals(lemmaEntity.getLemma(), lemma));
             }
         }
-        return lemmas.isEmpty() ? originalLemmas : lemmas;
+        lemmas.keySet().stream()
+                .collect(Collectors.groupingBy(
+                        LemmaEntity::getLemma,
+                        Collectors.summingInt(LemmaEntity::getFrequency))
+                );
+        return lemmas.size() < 2 ? originalLemmas : lemmas;
     }
 
     public String getSnippet(ArrayList<String> queryBaseFormWords, Document document, MultiLuceneMorphology multiLuceneMorphology) {
@@ -258,8 +267,8 @@ public class SearchWords {
                 List<String> wordBaseForm = luceneMorphology.getNormalForms(word);
                 normalFormsWords.add(wordBaseForm.get(0));
             } catch (WrongCharaterException | ArrayIndexOutOfBoundsException exception) {
-                Logger logger = Logger.getLogger(SearchService.class.getName());
-                logger.log(Level.WARNING, "Непонятное слово - " + word);
+                //Logger logger = Logger.getLogger(SearchService.class.getName());
+                //logger.log(Level.WARNING, "Непонятное слово - " + word);
                 normalFormsWords.add(word);
             }
         }

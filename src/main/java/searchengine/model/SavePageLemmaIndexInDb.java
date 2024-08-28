@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-public class SaveAllInDb {
+public class SavePageLemmaIndexInDb {
     private static PageCRUDService pageCRUDService;
     private static SiteCRUDService siteCRUDService;
     private static ArrayList<PageToDto> pageToDtoArrayList = new ArrayList<>();
 
     @Autowired
-    public SaveAllInDb(PageCRUDService pageCRUDService,
-                       SiteCRUDService siteCRUDService) {
-        SaveAllInDb.pageCRUDService = pageCRUDService;
-        SaveAllInDb.siteCRUDService = siteCRUDService;
+    public SavePageLemmaIndexInDb(PageCRUDService pageCRUDService,
+                                  SiteCRUDService siteCRUDService) {
+        SavePageLemmaIndexInDb.pageCRUDService = pageCRUDService;
+        SavePageLemmaIndexInDb.siteCRUDService = siteCRUDService;
     }
 
     public static synchronized void saveAllInDB(FindAndSaveLemmaAndIndex findAndSaveLemmaAndIndex, boolean isFinishSaveOnSite) {

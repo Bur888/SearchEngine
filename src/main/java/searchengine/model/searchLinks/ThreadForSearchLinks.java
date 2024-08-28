@@ -6,7 +6,7 @@ import org.jsoup.HttpStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import searchengine.config.Site;
 import searchengine.dto.entityesToDto.PageToDto;
-import searchengine.model.SaveAllInDb;
+import searchengine.model.SavePageLemmaIndexInDb;
 import searchengine.model.entityes.IndexEntity;
 import searchengine.model.entityes.LemmaEntity;
 import searchengine.model.entityes.SiteEntity;
@@ -83,8 +83,11 @@ public class ThreadForSearchLinks implements Runnable {
             FindAndSaveLemmaAndIndex findAndSaveLemmaAndIndex
                     = new FindAndSaveLemmaAndIndex(pageCRUDService, lemmaCRUDService, indexCRUDService);
 
-            SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
+            Thread.sleep(10000);
+
+            SavePageLemmaIndexInDb saveAllInDb = new SavePageLemmaIndexInDb(pageCRUDService, siteCRUDService);
             saveAllInDb.saveAllInDB(findAndSaveLemmaAndIndex, true);
+
             FindAndSaveLemmaAndIndex.setFinishSave(FindAndSaveLemmaAndIndex.getFinishSave() - 1);
             synchronized (ThreadForSearchLinks.class) {
                 if (FindAndSaveLemmaAndIndex.getFinishSave() == 0) {

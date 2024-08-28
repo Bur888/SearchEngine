@@ -9,6 +9,7 @@ import searchengine.dto.statistics.DetailedStatisticsItem;
 import searchengine.dto.statistics.StatisticsData;
 import searchengine.dto.statistics.StatisticsResponse;
 import searchengine.dto.statistics.TotalStatistics;
+import searchengine.model.entityes.StatusIndexing;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -50,15 +51,19 @@ public class StatisticsServiceImpl implements StatisticsService {
             DetailedStatisticsItem item = new DetailedStatisticsItem();
             item.setName(site.getName());
             item.setUrl(site.getUrl());
-            int siteId = siteCRUDService.getIdByUrl(site.getUrl());
-            int pages = pageCRUDService.getCountPagesOnSite(siteId);
-            int lemmas = lemmaCRUDService.getCountLemmasOnSite(siteId);
+            Integer siteId = siteCRUDService.getIdByUrl(site.getUrl());
+            if (siteId == null) {
+                total.setSites(total.getSites() -  1);
+                continue;
+            }
+            Integer pages = pageCRUDService.getCountPagesOnSite(siteId);
+            Integer lemmas = lemmaCRUDService.getCountLemmasOnSite(siteId);
             item.setPages(pages);
             item.setLemmas(lemmas);
-            item.setStatus(siteCRUDService.getStatusIndexing(siteId));
-            item.setError(siteCRUDService.getErrorIndexing(siteId));
-            item.setStatusTime(siteCRUDService.getStatusTimeIndexing(siteId)
-                    .atZone(ZoneId.of("Europe/Moscow")).toInstant().toEpochMilli());
+                item.setStatus(siteCRUDService.getStatusIndexing(siteId));
+                item.setError(siteCRUDService.getErrorIndexing(siteId));
+                item.setStatusTime(siteCRUDService.getStatusTimeIndexing(siteId)
+                        .atZone(ZoneId.of("Europe/Moscow")).toInstant().toEpochMilli());
             total.setPages(total.getPages() + pages);
             total.setLemmas(total.getLemmas() + lemmas);
             detailed.add(item);

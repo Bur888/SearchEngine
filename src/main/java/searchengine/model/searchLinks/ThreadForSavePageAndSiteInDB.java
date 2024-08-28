@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import searchengine.dto.entityesToDto.PageToDto;
-import searchengine.model.SaveAllInDb;
+import searchengine.model.SavePageLemmaIndexInDb;
 import searchengine.model.entityes.IndexEntity;
 import searchengine.model.findAndSaveLemmaAndIndex.FindAndSaveLemmaAndIndex;
 import searchengine.services.*;
@@ -42,31 +42,12 @@ public class ThreadForSavePageAndSiteInDB implements Runnable {
             try {
                 Thread.sleep(3000);
                 if (PageToDto.getPageToDtoHashMap().size() > 100) {
-                   SaveAllInDb saveAllInDb = new SaveAllInDb(pageCRUDService, siteCRUDService);
+                   SavePageLemmaIndexInDb saveAllInDb = new SavePageLemmaIndexInDb(pageCRUDService, siteCRUDService);
                     saveAllInDb.saveAllInDB(findAndSaveLemmaAndIndex, false);
-/*
-                    synchronized (PageToDto.getPageToDtoArrayList()) {
-                        pageToDtoArrayList = PageToDto.getPageToDtoArrayList();
-                        pageCRUDService.saveAndRemove(pageToDtoArrayList);
-
-                        for (Integer siteId : getAllSiteId()) {
-                            SiteEntity siteEntity = siteCRUDService.getById(siteId);
-                            siteEntity.setStatusTime(LocalDateTime.now());
-                            siteCRUDService.save(siteEntity);
-                        }
-
-                        Link.removeAllLinks(pageToDtoArrayList);
-                        pageToDtoArrayList.clear();
-                        Logger.getLogger("SavePageAndSiteInDB")
-                                .info("Прошел очередной цикл");
-
-                        findAndSaveLemmaAndIndex.run();
-                    }
-*/
                 }
             } catch (InterruptedException e) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }

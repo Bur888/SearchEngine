@@ -60,9 +60,13 @@ public class FindAndSaveLemmaAndIndex {
             NUM++;
         } else {
             List<PageEntity> pages = pageCRUDService.findAllMoreThenStartId(START_ID);
-            END_ID = pages.get(pages.size() - 1).getId();
-            findAndSaveLemmaAndIndex(pages);
-            START_ID = END_ID;
+            if (pages.isEmpty()) {
+                findAndSaveLemmaAndIndex(pages);;
+            } else {
+                END_ID = pages.get(pages.size() - 1).getId();
+                findAndSaveLemmaAndIndex(pages);
+                START_ID = END_ID;
+            }
         }
     }
 
